@@ -9,3 +9,9 @@ Windows Host
          ├── Limited filesystem  
          └── GitHub bot account (restricted)  
 </pre>
+
+Inside VM:
+- keep repos:
+-- ephemeral clones
+- delete after tasks  
+👉 minimizes persistence risk
