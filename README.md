@@ -297,3 +297,42 @@ This project allows execution of automated commands.
 * Designed for gradual evolution toward a more advanced system
 
 ---
+
+# ⚖️ Legal Disclaimer and No Warranty
+
+This project is provided **“as is”**, without any warranties or guarantees of any kind, express or implied.
+
+The author makes **no representations or warranties** regarding:
+
+* the correctness, completeness, or reliability of the code
+* the fitness of the software for any particular purpose
+* the security or safety of the system when used
+
+By using this repository, you acknowledge that:
+
+* the project may be **incomplete, experimental, or contain errors**
+* it may cause **data loss, system instability, or unintended behavior**
+* it is your responsibility to **review, test, and validate** all code before use
+
+## Limitation of Liability
+
+In no event shall the author be held liable for any:
+
+* direct or indirect damages
+* loss of data or profits
+* system failures or security incidents
+
+arising from the use or misuse of this software.
+
+## Use at Your Own Risk
+
+You agree to use this project **entirely at your own risk**.
+
+It is strongly recommended to:
+
+* run this software only in **isolated environments (e.g. virtual machines)**
+* avoid using it on systems containing sensitive or critical data
+
+---
+
+By using this repository, you agree to the terms stated above.
