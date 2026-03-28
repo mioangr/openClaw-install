@@ -1,5 +1,6 @@
 # openClaw-install
-Commands to install openClaw under linux
+Infrastructure as code for a local AI agent environment.
+Commands to install openClaw under linux. 
 
 ## Specifications
 
