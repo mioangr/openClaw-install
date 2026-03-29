@@ -10,6 +10,16 @@ To have an AI or AI agent that can collaborate with me on a public or private re
 It should be able to accept instructions via email or a chat window.  
 It should have the capability to build a software from the specifications alone. Or write a book using the instructions on the content and the description of the audience.
 
+**A secure, self-hosted AI collaborator** that works alongside you on code and writing projects.
+Send instructions via **email or chat**, and your AI agent will:
+- 💻 Build software from specifications alone
+- 📚 Write books based on content guidelines and audience description
+- 🔄 Collaborate on public and private repositories
+- 📝 Accept multi-channel instructions (email, REST API, web UI)
+- 🔐 Keep all work private and local (using DeepSeek)
+- ✅ Submit work as PRs for your review before merging
+
+
 # 🎯 Goal
 
 Create a **secure, portable, reproducible environment** where an AI agent (OpenClaw) can:
