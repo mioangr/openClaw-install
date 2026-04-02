@@ -1,0 +1,175 @@
+#cloud-config
+# =============================================================================
+# Ubuntu Server Autoinstall Configuration
+# =============================================================================
+# This file automates the installation of Ubuntu Server on VMware Workstation.
+# 
+# HOW TO USE THIS FILE:
+# 1. Save this content as 'autoinstall.yaml' (or 'user-data').
+# 2. Serve it via a web server (e.g., `python3 -m http.server 8000`).
+# 3. Boot the Ubuntu Server ISO, press 'e' on the first menu, and add:
+#    'autoinstall ds=nocloud-net;s=http://<your-ip>:8000/'
+#    (Replace <your-ip> with the IP of the machine serving this file.)
+# 4. The installation will run completely unattended.
+#
+# ALTERNATIVE (Local file):
+#    Place this file as 'user-data' inside a seed ISO or on a USB drive.
+#    See: https://ubuntu.com/server/docs/install/autoinstall
+#
+# IMPORTANT NOTES:
+# - The hashed password below was generated with:
+#   openssl passwd -6 "your_plain_password_here"
+# - To change the password later, replace the hash with a new one.
+# - To regenerate the hash: echo 'yourpassword' | mkpasswd -m sha-512 -S 'BQnOI0sC04/lVlAP'
+#   (Install 'whois' package for mkpasswd if needed.)
+# =============================================================================
+
+autoinstall:
+  version: 1
+
+  # --- Localisation ---
+  locale: "en_GB.UTF-8"        # British English locale (date, currency formats)
+  keyboard:
+    layout: "gr"               # Greek keyboard layout (el/gr both work, 'gr' is standard)
+    variant: ""
+    toggle: ""                 # No layout toggle key
+
+  # --- Network (DHCP) ---
+  network:
+    network:
+      version: 2
+      ethernets:
+        # Typical interface name for VMware VM (may be ens33 or enp0s3)
+        # The installer auto-detects, but we use a pattern to match any.
+        # Leave as is; installer will find the first interface.
+        install:
+          match:
+            name: "e*"         # Matches eth0, ens33, enp0s3, etc.
+          dhcp4: true
+          dhcp-identifier: mac # Stable DHCP lease based on MAC address
+
+  # --- Storage (Disk Partitioning) ---
+  # "direct" layout: single ext4 partition on the whole disk.
+  # This is simplest for a VM and easiest to expand later (just grow partition and resize2fs).
+  # If you prefer LVM (more flexible for snapshots/resizing), change layout to "lvm".
+  storage:
+    layout:
+      name: "direct"           # Direct partitioning (no LVM)
+      # For LVM, use: name: "lvm" and optionally set a volume group name.
+    # Optional: Force disk selection (first disk)
+    # grub_device: true
+    # swap: {size: 2GB}        # Uncomment to add a swap file/partition (default is zram)
+
+  # --- User Account & Security ---
+  identity:
+    hostname: "vm_ai_agent"
+    username: "iadmin"
+    # Password hash generated with: openssl passwd -6 "your_actual_password"
+    # DO NOT change the salt (BQnOI0sC04/lVlAP) unless you regenerate the whole hash.
+    password: "$6$BQnOI0sC04/lVlAP$/zkT3wrUJUjOmpnsdvbnxv8ykih3Y76WnDy1Aw0rglGOU95gAtLbFibkIK1qt5yJZ4wwIr5C9k7NRDiWxN0wp."
+  # No SSH keys (you will log in with password via console or SSH after enabling it)
+  ssh:
+    install-server: true       # Install OpenSSH server
+    allow-pw: true             # Allow password authentication (since no SSH key)
+    # If you later add an SSH key, set 'allow-pw: false' for better security.
+
+  # --- Packages to install (from Ubuntu repositories) ---
+  packages:
+    # System basics
+    - "curl"
+    - "wget"
+    - "git"
+    - "vim"
+    - "htop"
+    - "build-essential"        # gcc, make, etc. for compiling
+    # Python & AI tooling (no models downloaded yet)
+    - "python3"
+    - "python3-pip"
+    - "python3-venv"
+    # Additional useful tools
+    - "net-tools"
+    - "ufw"                    # Uncomplicated Firewall
+    - "fail2ban"               # Brute-force protection
+    # Note: Ollama is not in default repos; will be installed via late-commands.
+
+  # --- Updates & Upgrades (during installation) ---
+  updates: "security"          # Only security updates during install (faster)
+  # After install, late-commands will do a full upgrade.
+
+  # --- Late Commands (run after OS is installed, inside the target system) ---
+  # These commands run inside the newly installed system (use 'curtin in-target').
+  late-commands:
+    # 1. Update all packages (full upgrade)
+    - curtin in-target -- apt-get update -y
+    - curtin in-target -- apt-get upgrade -y
+
+    # 2. Install Ollama (for running LLMs like DeepSeek, Llama, etc.)
+    #    This script adds the official repository and installs ollama.
+    #    No models are downloaded at this stage.
+    - curtin in-target -- curl -fsSL https://ollama.com/install.sh | sh
+
+    # 3. Ensure Ollama starts on boot (the install script usually does this, but double-check)
+    - curtin in-target -- systemctl enable ollama
+    - curtin in-target -- systemctl start ollama
+
+    # 4. Basic Firewall Hardening
+    #    - Deny all incoming by default
+    #    - Allow outgoing (so VM can reach internet for updates)
+    #    - Enable SSH only if you want remote access (uncomment the allow line)
+    #    - To restrict the VM from accessing your local LAN but allow internet,
+    #      uncomment the iptables rule block. This blocks traffic to private IP ranges
+    #      while allowing traffic to your gateway (router) and public internet.
+    - curtin in-target -- ufw default deny incoming
+    - curtin in-target -- ufw default allow outgoing
+    # - curtin in-target -- ufw allow 22/tcp          # Enable if you need SSH from outside
+    - curtin in-target -- ufw --force enable
+
+    # 5. (Optional) Restrict LAN access - prevents VM from talking to other local devices
+    #    Uncomment the following lines to block outgoing to private subnets.
+    #    Note: This may break DHCP lease renewal if your DHCP server is on the same subnet.
+    #    A better approach is to set VMware network to NAT-only or a custom isolated network.
+    #    - curtin in-target -- iptables -A OUTPUT -d 10.0.0.0/8 -j DROP
+    #    - curtin in-target -- iptables -A OUTPUT -d 172.16.0.0/12 -j DROP
+    #    - curtin in-target -- iptables -A OUTPUT -d 192.168.0.0/16 -j DROP
+    #    - curtin in-target -- iptables-save > /etc/iptables/rules.v4  (if iptables-persistent installed)
+
+    # 6. Disable root SSH login (already disabled by default, but explicit)
+    - curtin in-target -- sed -i 's/^PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+    - curtin in-target -- systemctl restart ssh
+
+    # 7. Clean up package cache to reduce image size
+    - curtin in-target -- apt-get clean
+
+  # --- Optional: Write a README file to the home directory ---
+  write_files:
+    - path: /home/iadmin/README_FIRST.txt
+      content: |
+        ================================================================
+        Ubuntu Server "vm_ai_agent" - Golden Image Information
+        ================================================================
+        Hostname: vm_ai_agent
+        Username: iadmin
+        Password: (the one you used when generating the hash)
+
+        Installed AI-related tools:
+        - Ollama (service running on port 11434)
+        - Python 3 + pip + venv
+
+        To download a model (e.g., deepseek-coder):
+            ollama pull deepseek-coder
+
+        To run a model:
+            ollama run deepseek-coder
+
+        Security:
+        - UFW firewall is ENABLED (deny incoming, allow outgoing)
+        - Root SSH login disabled
+        - Fail2ban is installed (configure as needed)
+
+        For network isolation from your LAN:
+        - Use VMware NAT network mode (not Bridged)
+        - Or manually add iptables rules (see comments in autoinstall.yaml)
+
+        Enjoy your AI agent VM!
+      owner: iadmin:iadmin
+      permissions: '0644'
