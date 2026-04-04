@@ -3,6 +3,7 @@
 # =============================================================================
 # Ubuntu 24.04 Server Optimization & Hardening Script
 # Target: VMware Workstation (Win 11 Host with Hyper-V)
+# Download link for this script: 
 # =============================================================================
 
 # Exit on any error
