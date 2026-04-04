@@ -3,7 +3,8 @@
 # =============================================================================
 # Ubuntu 24.04 Server Optimization & Hardening Script
 # Target: VMware Workstation (Win 11 Host with Hyper-V)
-# Download link for this script: 
+# Download link for this script: https://raw.githubusercontent.com/mioangr/local-ai-agent/refs/heads/main/initial-config.sh
+# To execute it: curl -s https://raw.githubusercontent.com/mioangr/local-ai-agent/refs/heads/main/initial-config.sh | sh
 # =============================================================================
 
 # Exit on any error
