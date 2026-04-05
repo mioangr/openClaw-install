@@ -49,6 +49,25 @@ ToDo: reseach to build the list of components.
 
 ---
 
+### Key Design Points:
+- **Isolation**: VM → Docker → dedicated user (`aiuser`)
+- **Communication**: Only outbound to GitHub API (restricted, authenticated)
+- **Safety**: PR workflow ensures human review gate
+- **Extensibility**: Multi-channel input pattern supports future additions (email, webhooks)
+- **Auditability**: All actions logged for review and debugging
+
+---
+
+# 🧱 Architecture Overview
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Windows/Linux Host │ │ │ │ ┌──────────────────────────────────────────────────────┐ │ │ │ VMware VM (Ubuntu Server) │ │ │ │ │ │ │ │ ┌─────────────────────────────��──────────────────┐ │ │ │ │ │ Docker Environment │ │ │ │ │ │ │ │ │ │ │ │ ┌──────────────┐ ┌──────────────────────┐ │ │ │ │ │ │ │ DeepSeek │ │ OpenClaw Agent │ │ │ │ │ │ │ │ (Local LLM) │◄─┤ • GitHub integration │ │ │ │ │ │ │ │ │ │ • Code generation │ │ │ │ │ │ │ └──────────────┘ │ • Command execution │ │ │ │ │ │ │ │ • PR workflows │ │ │ │ │ │ │ └──────────────────────┘ │ │ │ │ │ │ │ │ │ │ │ │ │ aiuser (Linux) │ │ │ │ │ │ │ ┌──────────────────────────┼──────────────┐ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ Working Directory │ │ │ │ │ │ │ │ │ • Git repos (cloned) │ │ │ │ │ │ │ │ │ • Generated code/files │ │ │ │ │ │ │ │ │ • Logs & audit trail │ │ │ │ │ │ │ │ │ ▼ │ │ │ │ │ │ │ │ ┌──────────────────┐ │ │ │ │ │ │ │ │ │ GitHub APIs │ │ │ │ │ │ │ │ │ │ • Clone repos │ │ │ │ │ │ │ │ │ │ • Create PRs │ │ │ │ │ │ │ │ │ │ • Manage branches │ │ │ │ │ │ │ │ └──────────────────┘ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ └──────────────────────────────────────────┘ │ │ │ │ │ │ │ │ │ │ │ │ Isolated Filesystem (restricted access) │ │ │ │ │ │ │ │ │ │ │ └────────────────────────────────────────────────┘ │ │ │ │ │ │ │ │ Network: │ │ │ │ • Outbound: GitHub API (HTTPS) │ │ │ │ • Email receiver (optional) │ │ │ │ • No inbound access to host │ │ │ │ │ │ │ └──────────────────────────────────────────────────────┘ │ │ │ └─────────────────────────────────────────────────────────────┘
+
+Input Channels (Multi-channel): ├─ GitHub Issues/Discussions (polling or webhooks) ├─ REST API endpoints (local or exposed) ├─ Email (forwarded to agent) └─ Web UI dashboard (future)
+
+Output: └─ GitHub PRs (human reviews before merge) └─ Audit logs & execution records
+```
+
 # 🧱 Architecture Overview
 ToDo: update
 ```
