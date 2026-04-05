@@ -20,7 +20,6 @@ Send instructions via **email or chat**, and your AI agent will:
 - 🔐 Keep all work private and local (using DeepSeek)
 - ✅ Submit work as PRs for your review before merging
 
-
 ---
 
 
@@ -43,12 +42,6 @@ This setup is designed with **practical isolation**:
 
 ---
 
-# Selected components and reasoning for their choice.
-The following components (AI and helper components) are needed to build such a system:
-ToDo: reseach to build the list of components.
-
----
-
 ### Key Design Points:
 - **Isolation**: VM → Docker → dedicated user (`aiuser`)
 - **Communication**: Only outbound to GitHub API (restricted, authenticated)
@@ -58,31 +51,44 @@ ToDo: reseach to build the list of components.
 
 ---
 
-# 🧱 Architecture Overview
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Windows/Linux Host │
-│ │ │ ┌──────────────────────────────────────────────────────┐
-│ │ │ VMware VM (Ubuntu Server) │ │ │
-│ │ │ │ │ ┌─────────────────────────────��──────────────────┐
-│ │ │ │ │ Docker Environment │
-│ │ │ │ │ │ │ │ │ │ │ ┌──────────────┐ ┌──────────────────────┐ │ │ │ │ │ │ │ DeepSeek │ │ OpenClaw Agent │ │ │ │ │ │ │ │ (Local LLM) │◄─┤ • GitHub integration │ │ │ │ │ │ │ │ │ │ • Code generation │ │ │ │ │ │ │ └──────────────┘ │ • Command execution │ │ │ │ │ │ │ │ • PR workflows │ │ │ │ │ │ │ └──────────────────────┘ │ │ │ │ │ │ │ │ │ │ │ │ │ aiuser (Linux) │ │ │ │ │ │ │ ┌──────────────────────────┼──────────────┐ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ Working Directory
-│ │ │ │ │ │ │ │ • Git repos (cloned) │
-│ │ │ │ │ │ │ │ • Generated code/files │
-│ │ │ │ │ │ │ │ • Logs & audit trail │
-│ │ │ │ │ │ │ │ ▼ │ │ │ │ │ │ │ │ ┌──────────────────┐ │ │ │ │ │ │ │ │ │ GitHub APIs │ │ │ │ │ │ │ │ │ │ • Clone repos │ │ │ │ │ │ │ │ │ │ • Create PRs │ │ │ │ │ │ │ │ │ │ • Manage branches │ │ │ │ │ │ │ │ └──────────────────┘ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ └──────────────────────────────────────────┘ │ │ │ │ │ │ │ │ │ │ │ │ Isolated Filesystem (restricted access) │ │ │ │ │
-│ │ │ │ │ │ └────────────────────────────────────────────────┘ │ │ │ │
-│ │ │ │ Network:
-│ │ │ │ • Outbound: GitHub API (HTTPS)
-│ │ │ │ • Email receiver (optional)
-│ │ │ │ • No inbound access to host │ │ │ │
-│ │ │ └──────────────────────────────────────────────────────┘
-│ │ │ └─────────────────────────────────────────────────────────────┘
+# Selected components and reasoning for their choice.
+To achieve the stated goals, the following components are required:
 
-Input Channels (Multi-channel): ├─ GitHub Issues/Discussions (polling or webhooks) ├─ REST API endpoints (local or exposed) ├─ Email (forwarded to agent) └─ Web UI dashboard (future)
+## Infrastructure & Orchestration
+- **Ubuntu VM**: Host isolation layer
+- **Dedicated Linux user (`aiuser`)**: Process-level execution isolation
+- **Docker & Docker Compose**: Containerization for reproducibility and isolation
+- **`.env` secrets management**: Secure credential storage without GitHub exposure
 
-Output: └─ GitHub PRs (human reviews before merge) └─ Audit logs & execution records
-```
+## AI & LLM Layer
+- **DeepSeek** (or compatible local LLM): Runs locally in Docker for privacy; can build software from specifications and generate written content
+- **OpenClaw** (or alternative agent framework): Orchestrates interactions with GitHub, filesystem, and command execution
+
+## Integration & Communication Layer
+- **GitHub API & Git**: For repository interaction, PR workflow, and code version control
+- **Email integration** (optional but planned): For multi-channel instruction input
+- **REST API** (FastAPI or similar): For webhook receivers and agent task triggering
+- **Web UI** (optional): User-friendly dashboard for instructions and monitoring
+
+## Security & Control Layer
+- **Fine-grained GitHub tokens or SSH deploy keys**: Least-privilege repository access
+- **PR workflow enforcement**: Human review gate before code merges
+- **Execution safeguards** (planned): Command approval and filesystem restrictions
+- **Audit logging**: Track agent actions for security review
+
+## Reasoning
+Each component directly supports one or more goals:
+- Local LLM → Privacy requirement
+- Agent framework → Automation of software building and writing tasks
+- GitHub integration → Collaboration workflow
+- Docker + VM → Security model requirement
+- Multi-channel input → Flexibility of instruction delivery
+- PR workflow → Quality control and human oversight
+
+---
+
+
+
 
 # 🧱 Architecture Overview
 ToDo: update
