@@ -72,7 +72,7 @@ To define: where the other local AI component will reside? In separate dockers? 
 * VMware Workstation or VMware Fusion
 * Ubuntu Server installed inside VM
 * Internet access inside VM
-* Linux security hardening and extra packages were installed with the script linux-initial-config.sh
+* Linux security hardening and extra packages were installed with the script [linux-initial-config.sh](linux-initial-config.sh)
 * A "Golden image" is created for this state of linux so it can be reused in the next steps (installation of Docker and AI components)
 
 ---
