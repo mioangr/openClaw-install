@@ -299,8 +299,6 @@ Based on 2024 research, here's the complete comparison:
 
 ## Network Requirements
 
-- **Internet Speed:** 50 Mbps minimum (for GitHub API calls, model downloads)
-- **Latency:** <200ms recommended
 - **VM Network:** Isolated/separate from host network (critical!)
 - **Inbound Ports:** Only from host machine
   - 8000: REST API (if needed)
@@ -309,24 +307,3 @@ Based on 2024 research, here's the complete comparison:
 
 ---
 
-# 🔐 Security Hardening (16-Point Guide)
-
-[Full hardening guide from previous sections applies here]
-
----
-
-# ⚙️ Updated Setup Instructions
-
-[Your existing setup instructions, updated for multi-purpose framework]
-
----
-
-# 📌 Next Steps
-
-1. **Choose framework:** OpenClaw (recommended) or LangChain+FastAPI (flexible)
-2. **Decide on input channels:** Email (easiest), REST API, Webhooks, or all three
-3. **Select LLM model:** Mistral 7B (fast), Llama 2 7B (balanced), CodeLlama (code-focused)
-4. **Plan hardening:** Implement at least network isolation + firewall
-5. **Build custom tools:** GitHub, file I/O, email sending, command execution
-
----
