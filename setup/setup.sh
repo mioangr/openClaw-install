@@ -17,7 +17,7 @@ set -e  # Exit on any error
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SETUP_DIR="$SCRIPT_DIR/setup/ai-agent"
+SETUP_DIR="$SCRIPT_DIR/ai-agent"
 
 # Source common functions
 source "$SETUP_DIR/common.sh"
@@ -95,4 +95,4 @@ echo ""
 echo "For more information, see:"
 echo "  - agent/README.md - How the agent works"
 echo "  - scripts/README.md - Available commands"
-echo "  - docker/README.md - Container management"
+echo "  - setup/docker/README.md - Container management"

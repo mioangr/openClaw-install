@@ -72,7 +72,7 @@ The GitHub token in .env must have access to all repositories listed here. If a 
   "repos": [
     {
       "name": "example-project",
-      "url": "https://github.com/YOUR_USERNAME/YOUR_REPO",
+      "url": "https://github.com/mioangr/YOUR_REPO",
       "branch": "main",
       "description": "Replace with your actual repository"
     }

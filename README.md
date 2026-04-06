@@ -136,7 +136,7 @@ local-ai-agent/
 ├── setup.sh # ONE-TIME SETUP: Run this first
 ├── setup/ai-agent/ # All installation scripts
 ├── config-repos/ # Repository configurations
-├── docker/ # Docker and container files
+├── setup/docker/ # Docker and container files
 ├── agent/ # AI agent code
 ├── scripts/ # Utility scripts
 └── logs/ # Runtime logs
@@ -162,7 +162,7 @@ local-ai-agent/
 ├── config-repos/                      # Repository configurations
 │   ├── README.md                      # Documentation for repo configs
 │   └── repos.json                     # List of managed repositories
-├── docker/                            # Docker-related files
+├── setup/docker/                      # Docker-related files
 │   ├── README.md                      # Docker setup documentation
 │   ├── docker-compose.yml             # Main compose file
 │   ├── Dockerfile.agent               # Agent container build
@@ -213,7 +213,23 @@ local-ai-agent/
 - Creates PR
 
 ## Deployment
-To deploy, copy the entire github repo / folder to your VM and run ./setup.sh.
+
+Run the deployment from your **main Linux user account**. The setup scripts handle the process of automatically creating a specific, dedicated `aiuser` account that will be used by the AI components.
+
+You can create a subfolder (e.g., `setup`) in your home directory, clone the repository into it, and run the script from there.
+
+**Option 1: Single-command install via URL**
+```bash
+curl -s https://raw.githubusercontent.com/mioangr/local-ai-agent/main/setup/install-from-web.sh | bash
+```
+
+**Option 2: Manual clone and install**
+```bash
+git clone https://github.com/mioangr/local-ai-agent.git setup
+cd setup
+chmod +x setup/setup.sh
+sudo ./setup/setup.sh
+```
 
 ## Component Placement & Responsibilities
 
@@ -271,12 +287,21 @@ The gateway writes a task to Redis queue; the agent polls or listens, executes, 
 
 ## 2. Run Setup Script
 
-Download and execute:
+Make sure to run this step from your **main Linux user account** (the script will automatically create the dedicated `aiuser` account for the AI running context).
 
+**Method A: Automated URL Installation**
+Download and execute directly into a new `setup/` subfolder:
 ```bash
-curl -O https://raw.githubusercontent.com/YOUR_USERNAME/openClaw-install/main/setup_openclaw.sh
-chmod +x setup_openclaw.sh
-sudo ./setup_openclaw.sh
+curl -s https://raw.githubusercontent.com/mioangr/local-ai-agent/main/setup/install-from-web.sh | bash
+```
+
+**Method B: Manual Installation**
+Clone into a `setup/` folder and execute:
+```bash
+git clone https://github.com/mioangr/local-ai-agent.git setup
+cd setup
+chmod +x setup/setup.sh
+sudo ./setup/setup.sh
 ```
 
 
@@ -314,7 +339,7 @@ docker run hello-world
 Start environment:
 
 ```bash
-cd ~/openclaw
+cd ~/local-ai-agent
 docker compose up -d
 ```
 
@@ -325,7 +350,7 @@ docker compose up -d
 Secrets are stored locally in:
 
 ```
-/home/aiuser/openclaw/.env
+/home/aiuser/local-ai-agent/.env
 ```
 
 ### Example:

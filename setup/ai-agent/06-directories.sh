@@ -13,7 +13,7 @@ print_header "Creating Directory Structure"
 
 AI_USER="aiuser"
 AI_HOME="/home/$AI_USER"
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 # List of directories to create
 DIRECTORIES=(
@@ -37,8 +37,8 @@ done
 print_step "Copying project files to $AI_HOME..."
 
 # Copy docker files
-if [ -d "$PROJECT_ROOT/docker" ]; then
-    sudo cp -r "$PROJECT_ROOT/docker/"* "$AI_HOME/docker/"
+if [ -d "$PROJECT_ROOT/setup/docker" ]; then
+    sudo cp -r "$PROJECT_ROOT/setup/docker/"* "$AI_HOME/docker/"
     sudo chown -R $AI_USER:$AI_USER "$AI_HOME/docker"
     echo "  ✓ Copied docker files"
 fi
@@ -72,7 +72,7 @@ if [ ! -f "$AI_HOME/config-repos/repos.json" ]; then
   "repos": [
     {
       "name": "example-project",
-      "url": "https://github.com/YOUR_USERNAME/YOUR_REPO",
+      "url": "https://github.com/mioangr/YOUR_REPO",
       "branch": "main",
       "description": "Example repository - replace with your own"
     }
