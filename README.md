@@ -129,8 +129,20 @@ Each component directly supports one or more goals:
 │ └────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
 ```
+## Overview of folders and scripts 
 
-## Folder structure
+```
+local-ai-agent/
+├── setup.sh # ONE-TIME SETUP: Run this first
+├── ai-agent-setup/ # All installation scripts
+├── config-repos/ # Repository configurations
+├── docker/ # Docker and container files
+├── agent/ # AI agent code
+├── scripts/ # Utility scripts
+└── logs/ # Runtime logs
+```
+
+## Folder structure and contents
 
 ```
 local-ai-agent/
