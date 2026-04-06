@@ -1,0 +1,9 @@
+{
+  "repos": [
+    {
+      "name": "example-project",
+      "url": "https://github.com/YOUR_USERNAME/YOUR_REPO",
+      "branch": "main"
+    }
+  ]
+}

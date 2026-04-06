@@ -1,7 +1,3 @@
-
-#### `setup.sh` (Umbrella Setup Script)
-
-```bash
 #!/bin/bash
 # =============================================================================
 # Umbrella Setup Script for Local AI Agent

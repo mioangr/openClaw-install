@@ -129,16 +129,18 @@ Each component directly supports one or more goals:
 │ └────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
 ## Overview of folders and scripts 
 
 ```
 local-ai-agent/
-├── setup.sh # ONE-TIME SETUP: Run this first
+├── setup/setup.sh # install-from-web will call this
 ├── setup/ai-agent/ # All installation scripts
 ├── settings/repos/ # Repository configurations
 ├── setup/docker/ # Docker and container files
 ├── agent/ # AI agent code
 ├── scripts/ # Utility scripts
+├── archives/ # Old scripts and files
 └── logs/ # Runtime logs
 ```
 
@@ -159,14 +161,14 @@ local-ai-agent/
 │   ├── 07-docker-compose.sh           # Setup Docker Compose
 │   ├── 08-pull-model.sh               # Pull DeepSeek model
 │   └── common.sh                      # Common functions (error handling)
-├── settings/repos/                      # Repository configurations
-│   ├── README.md                      # Documentation for repo configs
-│   └── repos.json                     # List of managed repositories
 ├── setup/docker/                      # Docker-related files
 │   ├── README.md                      # Docker setup documentation
 │   ├── docker-compose.yml             # Main compose file
 │   ├── Dockerfile.agent               # Agent container build
 │   └── requirements.txt               # Python dependencies
+├── settings/repos/                      # Repository configurations
+│   ├── README.md                      # Documentation for repo configs
+│   └── repos.json                     # List of managed repositories
 ├── agent/                             # Agent code
 │   ├── README.md                      # Agent documentation
 │   ├── langgraph_agent.py             # Main agent script
@@ -186,14 +188,12 @@ local-ai-agent/
        {
          "name": "my-web-app",
          "url": "https://github.com/username/web-app",
-         "branch": "main",
-         "description": "Web application project"
+         "branch": "main"
        },
        {
          "name": "api-service", 
          "url": "https://github.com/username/api",
-         "branch": "main",
-         "description": "Backend API service"
+         "branch": "main"
        }
      ]
    }
@@ -214,20 +214,14 @@ local-ai-agent/
 
 Run the deployment from your **main Linux user account**. The setup scripts handle the process of automatically creating a specific, dedicated `aiuser` account that will be used by the AI components.
 
-You can create a subfolder (e.g., `setup`) in your home directory, clone the repository into it, and run the script from there.
 
-**Option 1: Single-command install via URL**
+
+**Single-command install via URL**
 ```bash
 curl -s https://raw.githubusercontent.com/mioangr/local-ai-agent/main/setup/install-from-web.sh | bash
 ```
+It will create a temporary subfolder (e.g., `temp-web-install`) in your home directory, clone the repository into it, and run the setup.sh script from there. After setup completes and the system is running normally, that temporary install folder is safe to delete.
 
-**Option 2: Manual clone and install**
-```bash
-git clone https://github.com/mioangr/local-ai-agent.git setup
-cd setup
-chmod +x setup/setup.sh
-sudo ./setup/setup.sh
-```
 
 ## Component Placement & Responsibilities
 
@@ -288,16 +282,16 @@ The gateway writes a task to Redis queue; the agent polls or listens, executes, 
 Make sure to run this step from your **main Linux user account** (the script will automatically create the dedicated `aiuser` account for the AI running context).
 
 **Method A: Automated URL Installation**
-Download and execute directly into a new `setup/` subfolder:
+Download and execute directly into a new temporary `temp-web-install/` subfolder:
 ```bash
 curl -s https://raw.githubusercontent.com/mioangr/local-ai-agent/main/setup/install-from-web.sh | bash
 ```
 
 **Method B: Manual Installation**
-Clone into a `setup/` folder and execute:
+Clone into a temporary `temp-web-install/` folder and execute:
 ```bash
-git clone https://github.com/mioangr/local-ai-agent.git setup
-cd setup
+git clone https://github.com/mioangr/local-ai-agent.git temp-web-install
+cd temp-web-install
 chmod +x setup/setup.sh
 sudo ./setup/setup.sh
 ```

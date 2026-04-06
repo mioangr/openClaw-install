@@ -65,24 +65,6 @@ if [ -d "$PROJECT_ROOT/settings/repos" ]; then
     echo "  ✓ Copied repository configuration"
 fi
 
-# Create initial repos.json if not exists
-if [ ! -f "$AI_HOME/settings/repos/repos.json" ]; then
-    sudo tee "$AI_HOME/settings/repos/repos.json" > /dev/null << 'EOF'
-{
-  "repos": [
-    {
-      "name": "example-project",
-      "url": "https://github.com/mioangr/YOUR_REPO",
-      "branch": "main",
-      "description": "Example repository - replace with your own"
-    }
-  ]
-}
-EOF
-    sudo chown $AI_USER:$AI_USER "$AI_HOME/settings/repos/repos.json"
-    echo "  ✓ Created example repos.json"
-fi
-
 echo ""
 print_step "Directory structure created successfully"
 echo ""
