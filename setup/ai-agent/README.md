@@ -27,7 +27,7 @@ Each script uses the `die()` function from `common.sh` to display friendly error
 
 Most scripts are idempotent (safe to rerun). If you need to restart from a specific step:
 ```bash
-  bash ai-agent-setup/03-python-deps.sh  # Run only Python setup
+  bash setup/ai-agent/03-python-deps.sh  # Run only Python setup
 ```
 
 ## Manual Intervention

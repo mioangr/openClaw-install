@@ -134,7 +134,7 @@ Each component directly supports one or more goals:
 ```
 local-ai-agent/
 ├── setup.sh # ONE-TIME SETUP: Run this first
-├── ai-agent-setup/ # All installation scripts
+├── setup/ai-agent/ # All installation scripts
 ├── config-repos/ # Repository configurations
 ├── docker/ # Docker and container files
 ├── agent/ # AI agent code
@@ -148,7 +148,7 @@ local-ai-agent/
 local-ai-agent/
 ├── README.md                          # Main project documentation (updated)
 ├── setup.sh                           # Umbrella setup script (run once)
-├── ai-agent-setup/                    # All setup scripts
+├── setup/ai-agent/                    # All setup scripts
 │   ├── README.md                      # Overview of setup scripts
 │   ├── 01-system-deps.sh              # Install system dependencies
 │   ├── 02-docker.sh                   # Install Docker

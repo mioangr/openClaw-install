@@ -1,5 +1,5 @@
 
-#### `ai-agent-setup/common.sh`
+#### `setup/ai-agent/common.sh`
 
 ```bash
 #!/bin/bash
