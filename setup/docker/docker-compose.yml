@@ -101,14 +101,14 @@ services:
 
       # Workspace Configuration
       - WORKSPACE=/workspace
-      - CONFIG_REPO_PATH=/config-repos
+      - CONFIG_REPO_PATH=/settings/repos
 
       # Logging
       - LOG_LEVEL=INFO
     volumes:
       - ./workspace:/workspace # Ephemeral repo clones
       - ../logs:/app/logs # Agent logs (mounted from host)
-      - ../config-repos:/config-repos:ro # Repository configs (read-only)
+      - ../settings/repos:/settings/repos:ro # Repository configs (read-only)
       - ../.env:/app/.env:ro # Secrets (read-only)
       - ../agent:/app/agent # Agent code (for development)
     working_dir: /app

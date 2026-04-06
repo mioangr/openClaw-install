@@ -29,17 +29,10 @@ Field |	Required | Description |
 | branch	| Yes	| Default branch to create PRs against |
 | description	| No	| For your reference only |
 
-### Adding a Repository
-#### Method 1: Edit manually
-
+### Managing Repositories
+Edit the JSON file directly:
 ```bash
-nano /home/aiuser/config-repos/repos.json
-```
-
-#### Method 2: Use helper script
-
-```bash
-/home/aiuser/scripts/add_repo.py --name my-project --url https://github.com/user/repo
+nano /home/aiuser/settings/repos/repos.json
 ```
 
 ### Security Note
@@ -51,7 +44,7 @@ The GitHub token in .env must have access to all repositories listed here. If a 
   "repos": [
     {
       "name": "personal-blog",
-      "url": "https://github.com/john/blog",
+      "url": "https://github.com/a_username/blog",
       "branch": "main",
       "description": "My personal blog"
     },
@@ -65,14 +58,14 @@ The GitHub token in .env must have access to all repositories listed here. If a 
 }
 ```
 
-#### `config-repos/repos.json`
+#### `settings/repos/repos.json`
 
 ```json
 {
   "repos": [
     {
       "name": "example-project",
-      "url": "https://github.com/mioangr/YOUR_REPO",
+      "url": "https://github.com/yourusername/YOUR_REPO",
       "branch": "main",
       "description": "Replace with your actual repository"
     }

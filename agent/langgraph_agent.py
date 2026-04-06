@@ -45,7 +45,7 @@ MODEL_NAME = os.getenv("MODEL_NAME", "deepseek-coder:6.7b-instruct-q4_K_M")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 GITHUB_USERNAME = os.getenv("GITHUB_USERNAME")
 WORKSPACE = os.getenv("WORKSPACE", "/workspace")
-CONFIG_REPO_PATH = os.getenv("CONFIG_REPO_PATH", "/config-repos")
+CONFIG_REPO_PATH = os.getenv("CONFIG_REPO_PATH", "/settings/repos")
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 # Setup logging

@@ -20,7 +20,7 @@ DIRECTORIES=(
     "$AI_HOME/docker"
     "$AI_HOME/agent"
     "$AI_HOME/scripts"
-    "$AI_HOME/config-repos"
+    "$AI_HOME/settings/repos"
     "$AI_HOME/logs"
     "$AI_HOME/workspace"
 )
@@ -58,16 +58,16 @@ if [ -d "$PROJECT_ROOT/scripts" ]; then
     echo "  ✓ Copied utility scripts"
 fi
 
-# Copy config-repos template
-if [ -d "$PROJECT_ROOT/config-repos" ]; then
-    sudo cp -r "$PROJECT_ROOT/config-repos/"* "$AI_HOME/config-repos/"
-    sudo chown -R $AI_USER:$AI_USER "$AI_HOME/config-repos"
+# Copy settings/repos template
+if [ -d "$PROJECT_ROOT/settings/repos" ]; then
+    sudo cp -r "$PROJECT_ROOT/settings/repos/"* "$AI_HOME/settings/repos/"
+    sudo chown -R $AI_USER:$AI_USER "$AI_HOME/settings/repos"
     echo "  ✓ Copied repository configuration"
 fi
 
 # Create initial repos.json if not exists
-if [ ! -f "$AI_HOME/config-repos/repos.json" ]; then
-    sudo tee "$AI_HOME/config-repos/repos.json" > /dev/null << 'EOF'
+if [ ! -f "$AI_HOME/settings/repos/repos.json" ]; then
+    sudo tee "$AI_HOME/settings/repos/repos.json" > /dev/null << 'EOF'
 {
   "repos": [
     {
@@ -79,7 +79,7 @@ if [ ! -f "$AI_HOME/config-repos/repos.json" ]; then
   ]
 }
 EOF
-    sudo chown $AI_USER:$AI_USER "$AI_HOME/config-repos/repos.json"
+    sudo chown $AI_USER:$AI_USER "$AI_HOME/settings/repos/repos.json"
     echo "  ✓ Created example repos.json"
 fi
 
@@ -91,7 +91,7 @@ echo "  $AI_HOME/"
 echo "  ├── docker/          - Docker compose and container files"
 echo "  ├── agent/           - AI agent Python code"
 echo "  ├── scripts/         - Utility scripts (send_task, etc.)"
-echo "  ├── config-repos/    - Repository configurations"
+echo "  ├── settings/repos/    - Repository configurations"
 echo "  ├── logs/            - Runtime logs"
 echo "  ├── workspace/       - Temporary clones of repositories"
 echo "  └── .env             - Secrets (created earlier)"

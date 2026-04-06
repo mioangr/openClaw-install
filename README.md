@@ -135,7 +135,7 @@ Each component directly supports one or more goals:
 local-ai-agent/
 ├── setup.sh # ONE-TIME SETUP: Run this first
 ├── setup/ai-agent/ # All installation scripts
-├── config-repos/ # Repository configurations
+├── settings/repos/ # Repository configurations
 ├── setup/docker/ # Docker and container files
 ├── agent/ # AI agent code
 ├── scripts/ # Utility scripts
@@ -159,7 +159,7 @@ local-ai-agent/
 │   ├── 07-docker-compose.sh           # Setup Docker Compose
 │   ├── 08-pull-model.sh               # Pull DeepSeek model
 │   └── common.sh                      # Common functions (error handling)
-├── config-repos/                      # Repository configurations
+├── settings/repos/                      # Repository configurations
 │   ├── README.md                      # Documentation for repo configs
 │   └── repos.json                     # List of managed repositories
 ├── setup/docker/                      # Docker-related files
@@ -171,17 +171,15 @@ local-ai-agent/
 │   ├── README.md                      # Agent documentation
 │   ├── langgraph_agent.py             # Main agent script
 │   └── repo_manager.py                # Repository management utilities
-├── scripts/                           # Helper scripts
+├── scripts/                            # Helper scripts
 │   ├── README.md                      # Scripts documentation
-│   ├── send_task.py                   # Send task to agent
-│   ├── list_repos.py                  # List configured repositories
-│   └── add_repo.py                    # Add new repository
+│   └── send_task.py                   # Send task to agent
 └── logs/                              # Log files (created at runtime)
 ```
 
 ## How It Works With Multiple Projects
 
-1. **Configure repositories** in `config-repos/repos.json`:
+1. **Configure repositories** in `settings/repos/repos.json`:
    ```json
    {
      "repos": [

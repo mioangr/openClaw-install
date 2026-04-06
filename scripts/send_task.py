@@ -19,7 +19,7 @@ import redis
 import time
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
-CONFIG_PATH = os.getenv("CONFIG_REPO_PATH", "/home/aiuser/config-repos")
+CONFIG_PATH = os.getenv("CONFIG_REPO_PATH", "/home/aiuser/settings/repos")
 
 def load_repositories():
     """Load repository config to validate project name"""

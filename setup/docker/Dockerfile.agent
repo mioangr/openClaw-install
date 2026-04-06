@@ -32,7 +32,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy agent code (mounted as volume in development, but copied for production)
 COPY agent/ ./agent/
-COPY config-repos/ ./config-repos/
+COPY settings/repos/ ./settings/repos/
 
 # Create necessary directories
 RUN mkdir -p /workspace /app/logs && chmod 755 /workspace

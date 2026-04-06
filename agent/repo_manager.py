@@ -19,7 +19,7 @@ import sys
 import argparse
 from typing import Dict, List
 
-CONFIG_PATH = os.getenv("CONFIG_REPO_PATH", "/config-repos")
+CONFIG_PATH = os.getenv("CONFIG_REPO_PATH", "/settings/repos")
 CONFIG_FILE = os.path.join(CONFIG_PATH, "repos.json")
 
 def load_config() -> Dict:

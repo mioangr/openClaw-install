@@ -13,7 +13,7 @@ This folder contains the core AI agent code that processes tasks and interacts w
 
 1. **Startup**: Agent connects to Redis and waits for tasks on queue `task:queue`
 2. **Task Reception**: Task format: `{"project": "my-project", "instruction": "Add error handling"}`
-3. **Lookup**: Reads `config-repos/repos.json` to find repository URL for the project
+3. **Lookup**: Reads `settings/repos/repos.json` to find repository URL for the project
 4. **Execution Flow**:
    - Clone repository (or update if exists)
    - Create new branch (`ai-<instruction-slug>`)

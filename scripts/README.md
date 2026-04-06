@@ -7,8 +7,6 @@ Helper scripts for interacting with the AI agent system.
 | Script | Purpose | Example |
 |--------|---------|---------|
 | `send_task.py` | Send a task to the agent | `./send_task.py --project my-app --instruction "Add logging"` |
-| `list_repos.py` | List configured repositories | `./list_repos.py` |
-| `add_repo.py` | Add a new repository | `./add_repo.py --name my-app --url https://github.com/user/repo` |
 
 ## Usage
 
@@ -28,23 +26,19 @@ The script will:
 - Push the task to Redis queue
 - Wait for result (or return immediately with task ID)
 
-### Listing Repositories
+### Managing Repositories
+Edit the repository list manually in:
 ```bash
-./list_repos.py --verbose
-```
-
-### Adding a Repository
-```bash
-./add_repo.py --name new-project --url https://github.com/username/repo --branch main
+/home/aiuser/settings/repos/repos.json
 ```
 
 ### Environment
 These scripts expect:
 - Redis running on localhost:6379 (default)
-- Configuration at /home/aiuser/config-repos/repos.json
+- Configuration at /home/aiuser/settings/repos/repos.json
 - You can override with environment variables:
 
 ```bash
 export REDIS_URL=redis://localhost:6379
-export CONFIG_PATH=/custom/path/repos.json
+export CONFIG_REPO_PATH=/custom/path
 ```

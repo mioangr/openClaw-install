@@ -12,7 +12,7 @@ import json
 import os
 import sys
 
-CONFIG_PATH = os.getenv("CONFIG_REPO_PATH", "/home/aiuser/config-repos")
+CONFIG_PATH = os.getenv("CONFIG_REPO_PATH", "/home/aiuser/settings/repos")
 CONFIG_FILE = os.path.join(CONFIG_PATH, "repos.json")
 
 def load_config():

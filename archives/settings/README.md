@@ -1,0 +1,1 @@
+This folder contains files and scripts that define the various settings of the machine. These settings might change from time to time. (As opposed to the files and scripts at the setup folder that are run only during the initial setup)
