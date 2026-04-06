@@ -4,16 +4,12 @@
 # =============================================================================
 # Purpose: Prompts for GitHub token and stores it securely in .env file
 # Dependencies: User 'aiuser' exists
-# Output: /home/aiuser/.env with GITHUB_TOKEN and GITHUB_USERNAME
+# Output: $INSTALL_ROOT/.env with GitHub and runtime settings
 # =============================================================================
 
 source "$(dirname "$0")/common.sh"
 
 print_header "Configuring Secrets"
-
-AI_USER="aiuser"
-AI_HOME="/home/$AI_USER"
-ENV_FILE="$AI_HOME/.env"
 
 # Check if .env already exists
 if [ -f "$ENV_FILE" ]; then
@@ -53,6 +49,8 @@ fi
 
 # Create .env file
 print_step "Creating .env file at $ENV_FILE..."
+sudo mkdir -p "$INSTALL_ROOT"
+sudo chown "$AI_USER:$AI_USER" "$INSTALL_ROOT"
 
 sudo tee "$ENV_FILE" > /dev/null << EOF
 # GitHub Authentication
@@ -61,10 +59,12 @@ GITHUB_USERNAME=$GITHUB_USERNAME
 
 # LLM Configuration
 OLLAMA_URL=http://ollama:11434
-REDIS_URL=redis://redis:6379
+MODEL_NAME=$MODEL_NAME
 
-# Workspace
+# Runtime Configuration
+REDIS_URL=redis://redis:6379
 WORKSPACE=/workspace
+LOG_LEVEL=$LOG_LEVEL
 EOF
 
 # Set secure permissions

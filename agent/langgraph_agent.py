@@ -1,7 +1,3 @@
-
-#### `agent/langgraph_agent.py`
-
-```python
 #!/usr/bin/env python3
 """
 ================================================================================
@@ -113,8 +109,7 @@ def load_repositories() -> Dict[str, Dict[str, str]]:
             for repo in data.get("repos", []):
                 repos[repo["name"]] = {
                     "url": repo["url"],
-                    "branch": repo.get("branch", "main"),
-                    "description": repo.get("description", "")
+                    "branch": repo.get("branch", "main")
                 }
             logger.info(f"Loaded {len(repos)} repositories from config")
             return repos

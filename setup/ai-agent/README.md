@@ -2,6 +2,8 @@
 
 This folder contains all scripts required for the one-time installation of the AI agent environment.
 
+Shared installer settings live in the repo-root `install.conf` file.
+
 ## Scripts Overview
 
 | Script | Purpose | When to run |
@@ -9,7 +11,7 @@ This folder contains all scripts required for the one-time installation of the A
 | `common.sh` | Shared functions and error handling | Sourced by other scripts |
 | `01-system-deps.sh` | Installs git, curl, build tools | Once, before anything else |
 | `02-docker.sh` | Installs Docker Engine and Compose | After system deps |
-| `03-python-deps.sh` | Installs Python 3.11 and pip packages | After Docker |
+| `03-python-deps.sh` | Installs Python and pip packages | After Docker |
 | `04-create-user.sh` | Creates `aiuser` with proper permissions | After Python |
 | `05-secrets.sh` | Prompts for and stores GitHub token | After user creation |
 | `06-directories.sh` | Creates project folder structure | After secrets |

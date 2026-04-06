@@ -1,14 +1,54 @@
-
-#### `setup/ai-agent/common.sh`
-
-```bash
 #!/bin/bash
 # =============================================================================
 # Common Functions for Setup Scripts
 # =============================================================================
-# Purpose: Provides shared error handling and utility functions
-# Usage:   source /path/to/common.sh
-# =============================================================================
+
+COMMON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$COMMON_DIR/../.." && pwd)"
+INSTALL_CONFIG_FILE="${INSTALL_CONFIG_FILE:-$PROJECT_ROOT/install.conf}"
+
+if [ ! -f "$INSTALL_CONFIG_FILE" ]; then
+    echo "ERROR: install config file not found at $INSTALL_CONFIG_FILE"
+    exit 1
+fi
+
+# shellcheck disable=SC1090
+source "$INSTALL_CONFIG_FILE"
+
+AI_USER="${AI_USER:-aiuser}"
+INSTALL_DEST_DIR="${INSTALL_DEST_DIR:-local-ai-agent}"
+MODEL_NAME="${MODEL_NAME:-deepseek-coder:6.7b-instruct-q4_K_M}"
+LOG_LEVEL="${LOG_LEVEL:-INFO}"
+
+AI_HOME="/home/$AI_USER"
+INSTALL_ROOT="$AI_HOME/$INSTALL_DEST_DIR"
+ENV_FILE="$INSTALL_ROOT/.env"
+DOCKER_DIR="$INSTALL_ROOT/docker"
+AGENT_DIR="$INSTALL_ROOT/agent"
+SCRIPTS_DIR="$INSTALL_ROOT/scripts"
+SETTINGS_DIR="$INSTALL_ROOT/settings"
+REPOS_DIR="$SETTINGS_DIR/repos"
+LOGS_DIR="$INSTALL_ROOT/logs"
+WORKSPACE_DIR="$INSTALL_ROOT/workspace"
+COMPOSE_FILE="$DOCKER_DIR/docker-compose.yml"
+
+export PROJECT_ROOT
+export INSTALL_CONFIG_FILE
+export AI_USER
+export INSTALL_DEST_DIR
+export MODEL_NAME
+export LOG_LEVEL
+export AI_HOME
+export INSTALL_ROOT
+export ENV_FILE
+export DOCKER_DIR
+export AGENT_DIR
+export SCRIPTS_DIR
+export SETTINGS_DIR
+export REPOS_DIR
+export LOGS_DIR
+export WORKSPACE_DIR
+export COMPOSE_FILE
 
 # Colors
 RED='\033[0;31m'
@@ -17,35 +57,33 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# Print formatted messages
 print_header() {
     echo ""
-    echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
+    echo -e "${BLUE}===========================================================${NC}"
     echo -e "${BLUE}  $1${NC}"
-    echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
+    echo -e "${BLUE}===========================================================${NC}"
     echo ""
 }
 
 print_step() {
-    echo -e "${GREEN}▶ $1${NC}"
+    echo -e "${GREEN}> $1${NC}"
 }
 
 print_error() {
-    echo -e "${RED}✗ ERROR: $1${NC}"
+    echo -e "${RED}ERROR: $1${NC}"
 }
 
 print_warning() {
-    echo -e "${YELLOW}⚠ WARNING: $1${NC}"
+    echo -e "${YELLOW}WARNING: $1${NC}"
 }
 
-# Error handling function
 die() {
     local exit_code=$1
     local error_msg=$2
     local fix_msg=$3
-    
+
     print_error "$error_msg"
-    
+
     if [ -n "$fix_msg" ]; then
         echo ""
         echo -e "${YELLOW}How to fix:${NC}"
@@ -55,19 +93,17 @@ die() {
         echo "  - The README.md file"
         echo "  - The error logs above"
     fi
-    
-    exit $exit_code
+
+    exit "$exit_code"
 }
 
-# Check if command exists
 check_command() {
-    if ! command -v $1 &> /dev/null; then
+    if ! command -v "$1" >/dev/null 2>&1; then
         return 1
     fi
     return 0
 }
 
-# Check error from last command
 check_error() {
     local message="$1"
     if [ $? -ne 0 ]; then
@@ -75,12 +111,11 @@ check_error() {
     fi
 }
 
-# Run command with error checking
 run_safe() {
     local cmd="$1"
     local error_msg="$2"
-    
+
     print_step "Running: $cmd"
-    eval $cmd
+    eval "$cmd"
     check_error "$error_msg"
 }

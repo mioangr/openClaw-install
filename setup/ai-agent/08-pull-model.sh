@@ -11,13 +11,12 @@ source "$(dirname "$0")/common.sh"
 
 print_header "Downloading DeepSeek Model"
 
-MODEL_NAME="deepseek-coder:6.7b-instruct-q4_K_M"
 MODEL_SIZE="~4GB"
 
 # Check if Ollama container is running
 if ! sudo docker ps | grep -q ollama; then
     die 1 "Ollama container is not running" \
-           "Start it with: cd /home/aiuser/docker && docker compose up -d ollama"
+           "Start it with: cd $DOCKER_DIR && docker compose up -d ollama"
 fi
 
 print_step "Checking if model already exists..."

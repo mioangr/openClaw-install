@@ -90,7 +90,7 @@ services:
     environment:
       # LLM Configuration
       - OLLAMA_URL=http://ollama:11434
-      - MODEL_NAME=deepseek-coder:6.7b-instruct-q4_K_M
+      - MODEL_NAME=${MODEL_NAME}
 
       # Redis Configuration
       - REDIS_URL=redis://redis:6379
@@ -104,7 +104,7 @@ services:
       - CONFIG_REPO_PATH=/settings/repos
 
       # Logging
-      - LOG_LEVEL=INFO
+      - LOG_LEVEL=${LOG_LEVEL}
     volumes:
       - ./workspace:/workspace # Ephemeral repo clones
       - ../logs:/app/logs # Agent logs (mounted from host)

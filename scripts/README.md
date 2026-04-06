@@ -12,7 +12,7 @@ Helper scripts for interacting with the AI agent system.
 
 All scripts connect to Redis to communicate with the agent. Make sure Redis is running:
 ```bash
-cd /home/aiuser/docker && docker compose ps redis
+cd /home/aiuser/local-ai-agent/docker && docker compose ps redis
 ```
 
 ### Sending a Task
@@ -29,13 +29,13 @@ The script will:
 ### Managing Repositories
 Edit the repository list manually in:
 ```bash
-/home/aiuser/settings/repos/repos.json
+/home/aiuser/local-ai-agent/settings/repos/repos.json
 ```
 
 ### Environment
 These scripts expect:
 - Redis running on localhost:6379 (default)
-- Configuration at /home/aiuser/settings/repos/repos.json
+- Configuration at /home/aiuser/local-ai-agent/settings/repos/repos.json
 - You can override with environment variables:
 
 ```bash

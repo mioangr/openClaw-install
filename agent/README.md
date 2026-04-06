@@ -51,7 +51,7 @@ Environment variables (set in docker-compose.yml or .env):
 Run the agent outside Docker for testing:
 
 ```bash
-cd /home/aiuser/agent
+cd /home/aiuser/local-ai-agent/agent
 export GITHUB_TOKEN=your_token
 python langgraph_agent.py
 ```

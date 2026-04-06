@@ -19,7 +19,29 @@ import sys
 import argparse
 from typing import Dict, List
 
-CONFIG_PATH = os.getenv("CONFIG_REPO_PATH", "/settings/repos")
+def load_install_config() -> Dict[str, str]:
+    values: Dict[str, str] = {}
+    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "install.conf")
+
+    if not os.path.exists(config_path):
+        return values
+
+    with open(config_path, "r", encoding="utf-8") as f:
+        for raw_line in f:
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+
+            key, value = line.split("=", 1)
+            values[key.strip()] = value.strip().strip("'\"")
+
+    return values
+
+INSTALL_CONFIG = load_install_config()
+AI_USER = INSTALL_CONFIG.get("AI_USER", "aiuser")
+INSTALL_DEST_DIR = INSTALL_CONFIG.get("INSTALL_DEST_DIR", "local-ai-agent")
+DEFAULT_CONFIG_PATH = f"/home/{AI_USER}/{INSTALL_DEST_DIR}/settings/repos"
+CONFIG_PATH = os.getenv("CONFIG_REPO_PATH", DEFAULT_CONFIG_PATH if os.path.exists(DEFAULT_CONFIG_PATH) else "/settings/repos")
 CONFIG_FILE = os.path.join(CONFIG_PATH, "repos.json")
 
 def load_config() -> Dict:

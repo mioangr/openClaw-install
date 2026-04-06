@@ -116,8 +116,8 @@ Each component directly supports one or more goals:
 │ │             │                                              │  │
 │ │ ┌───────────▼─────────────────────────────────────────┐    │  │
 │ │ │ Host Volumes (bind mounts)                          │    │  │
-│ │ │ - /home/aiuser/workspace (ephemeral clones)         │    │  │
-│ │ │ - /home/aiuser/.env (secrets, read-only)            │    │  │
+│ │ │ - /home/aiuser/local-ai-agent/workspace             │    │  │
+│ │ │ - /home/aiuser/local-ai-agent/.env                  │    │  │
 │ │ └─────────────────────────────────────────────────────┘    │  │
 │ │                                                            │  │
 │ │ ┌─────────────────────────────────────────────────────┐    │  │
@@ -149,6 +149,7 @@ local-ai-agent/
 ```
 local-ai-agent/
 ├── README.md                          # Main project documentation (updated)
+├── install.conf                       # Shared install configuration
 ├── setup.sh                           # Umbrella setup script (run once)
 ├── setup/ai-agent/                    # All setup scripts
 │   ├── README.md                      # Overview of setup scripts
@@ -231,7 +232,7 @@ It will create a temporary subfolder (e.g., `temp-web-install`) in your home dir
 | **LLM** (DeepSeek via Ollama) | Separate Docker container | Serves model locally over HTTP. No internet needed after download.      |
 | **API Gateway**      | Separate container (FastAPI) | Receives instructions from email (via webhook), chat, or REST. Queues tasks for agent. |
 | **Redis / Volume**   | Docker volume          | Stores conversation memory, task queues, audit logs.     |
-| **Workspace**        | Host bind mount (`/home/aiuser/workspace`) | Ephemeral clones of repos; cleared after each run or PR |
+| **Workspace**        | Host bind mount (`/home/aiuser/local-ai-agent/workspace`) | Ephemeral clones of repos; cleared after each run or PR |
 | **Secrets**          | Host file `.env` (600 perms) | Injected as environment variables into agent container (read-only). |
 
 ## Network & Security Rules
@@ -331,7 +332,7 @@ docker run hello-world
 Start environment:
 
 ```bash
-cd ~/local-ai-agent
+cd /home/aiuser/local-ai-agent/docker
 docker compose up -d
 ```
 

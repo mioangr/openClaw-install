@@ -30,7 +30,7 @@ Field |	Required | Description |
 ### Managing Repositories
 Edit the JSON file directly:
 ```bash
-nano /home/aiuser/settings/repos/repos.json
+nano /home/aiuser/local-ai-agent/settings/repos/repos.json
 ```
 
 ### Security Note

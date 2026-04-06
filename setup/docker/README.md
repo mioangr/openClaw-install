@@ -45,6 +45,8 @@ Adjust based on your VM's resources.
 ## Commands
 
 ```bash
+cd /home/aiuser/local-ai-agent/docker
+
 # Start all containers
 docker compose up -d
 
