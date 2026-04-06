@@ -179,6 +179,38 @@ local-ai-agent/
 └── logs/                              # Log files (created at runtime)
 ```
 
+## How It Works With Multiple Projects
+
+1. **Configure repositories** in `config-repos/repos.json`:
+   ```json
+   {
+     "repos": [
+       {
+         "name": "my-web-app",
+         "url": "https://github.com/username/web-app",
+         "branch": "main",
+         "description": "Web application project"
+       },
+       {
+         "name": "api-service", 
+         "url": "https://github.com/username/api",
+         "branch": "main",
+         "description": "Backend API service"
+       }
+     ]
+   }
+
+2. Send commands with project name:
+
+   ```bash
+   ./scripts/send_task.py --project my-web-app --instruction "Add error handling to login function"
+
+3. Agent automatically:
+
+- Looks up repository URL from config
+- Clones the specific project
+-  Makes changes
+- Creates PR
 
 ## Component Placement & Responsibilities
 
