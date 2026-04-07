@@ -35,7 +35,11 @@ check_error "Failed to create user $AI_USER"
 prompt_yes_no "Set a login password for $AI_USER now? (y/n) " REPLY
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     print_step "Setting password for $AI_USER..."
-    sudo passwd $AI_USER
+    if [ "$(id -u)" -eq 0 ]; then
+        run_interactive_command passwd "$AI_USER"
+    else
+        run_interactive_command sudo passwd "$AI_USER"
+    fi
     check_error "Failed to set password for $AI_USER"
 else
     print_warning "Skipping password setup for $AI_USER"

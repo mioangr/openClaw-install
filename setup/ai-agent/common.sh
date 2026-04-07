@@ -196,3 +196,13 @@ prompt_enter() {
         read -p "$prompt" -r < /dev/tty
     fi
 }
+
+run_interactive_command() {
+    ensure_interactive_input
+
+    if [ -t 0 ]; then
+        "$@"
+    else
+        "$@" < /dev/tty > /dev/tty
+    fi
+}
