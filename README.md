@@ -217,7 +217,7 @@ local-ai-agent/
 |--------|---------|-------|
 | `install-from-web.sh` | Bootstrap a fresh VM installation from GitHub | `curl -s https://raw.githubusercontent.com/mioangr/local-ai-agent/main/setup/install-from-web.sh \| bash` |
 | `rm -rf temp-web-install` | remove temp folder |  |
-| repos.json | Edit the list of repos | sudo nano /home/aiuser/local-ai-agent/settings/repos/repos.json  |
+| repos.json | Edit the list of repos | `sudo nano /home/aiuser/local-ai-agent/settings/repos/repos.json`  |
 | `doctor.sh` | Inspect the installation and report what is missing or unhealthy | `cd /home/aiuser/local-ai-agent/scripts && ./doctor.sh` |
 | `reset-runtime.sh` | Stop containers and clear transient runtime state so you can retry the Docker/runtime steps | `cd /home/aiuser/local-ai-agent/scripts && ./reset-runtime.sh` |
 | `reset-install.sh` | Remove the installed project files, and optionally the dedicated user, before reinstalling | `cd /home/aiuser/local-ai-agent/scripts && ./reset-install.sh --remove-user` |
