@@ -18,7 +18,7 @@ sudo apt update && sudo apt upgrade -y
 
 # 2. Install Essential Utilities & VMware Integration
 echo "--- Installing Essential Tools & Open-VM-Tools ---"
-sudo apt install -y open-vm-tools open-vm-tools-desktop curl wget git build-essential vim htop net-tools
+sudo apt install -y open-vm-tools open-vm-tools-desktop curl wget git build-essential vim htop net-tools btop
 
 # 3. Security Hardening: Firewall (UFW)
 echo "--- Configuring Firewall (Allowing SSH only) ---"
