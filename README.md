@@ -219,6 +219,13 @@ local-ai-agent/
 | `doctor.sh` | Inspect the installation and report what is missing or unhealthy | `cd /home/aiuser/local-ai-agent/scripts && ./doctor.sh` |
 | `reset-runtime.sh` | Stop containers and clear transient runtime state so you can retry the Docker/runtime steps | `cd /home/aiuser/local-ai-agent/scripts && ./reset-runtime.sh` |
 | `reset-install.sh` | Remove the installed project files, and optionally the dedicated user, before reinstalling | `cd /home/aiuser/local-ai-agent/scripts && ./reset-install.sh --remove-user` |
+| reset install from the web | tmpdir="$(mktemp -d)" && \
+curl -fsSL https://raw.githubusercontent.com/mioangr/local-ai-agent/main/scripts/reset-install.sh -o "$tmpdir/reset-install.sh" && \
+curl -fsSL https://raw.githubusercontent.com/mioangr/local-ai-agent/main/scripts/common.sh -o "$tmpdir/common.sh" && \
+chmod +x "$tmpdir/reset-install.sh" "$tmpdir/common.sh" && \
+"$tmpdir/reset-install.sh" --remove-user
+ |
+
 
 Run the deployment from your **main Linux user account**. The setup scripts handle the process of automatically creating a specific, dedicated `aiuser` account that will be used by the AI components.
 
