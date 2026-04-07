@@ -12,12 +12,24 @@ source "$(dirname "$0")/common.sh"
 print_header "Setting Up Docker Containers"
 
 run_compose_as_aiuser() {
-    local compose_cmd="$1"
+    local compose_shell_cmd
+    local docker_dir_quoted
+    local arg
+    local compose_display
 
-    sudo -iu "$AI_USER" bash -lc "
-        cd '$DOCKER_DIR'
-        docker compose $compose_cmd
-    "
+    printf -v docker_dir_quoted '%q' "$DOCKER_DIR"
+    compose_shell_cmd="cd $docker_dir_quoted && docker compose"
+
+    for arg in "$@"; do
+        local arg_quoted
+        printf -v arg_quoted '%q' "$arg"
+        compose_shell_cmd+=" $arg_quoted"
+    done
+
+    compose_display=$(format_command cd "$DOCKER_DIR" "&&" docker compose "$@")
+    print_step "Running as $AI_USER: $compose_display"
+
+    sudo -iu "$AI_USER" bash -lc "$compose_shell_cmd"
 }
 
 # Check if compose file exists
@@ -28,11 +40,11 @@ fi
 
 # Switch to ai user context for Docker operations
 print_step "Building Docker images (this may take a few minutes)..."
-run_compose_as_aiuser "build"
+run_compose_as_aiuser build
 check_error "Docker build failed"
 
 print_step "Starting containers..."
-run_compose_as_aiuser "up -d"
+run_compose_as_aiuser up -d
 check_error "Failed to start containers"
 
 # Wait for containers to be ready

@@ -206,3 +206,28 @@ run_interactive_command() {
         "$@" < /dev/tty > /dev/tty
     fi
 }
+
+format_command() {
+    local formatted=""
+    local arg
+    local arg_formatted
+
+    for arg in "$@"; do
+        if [ -n "$formatted" ]; then
+            formatted+=" "
+        fi
+
+        case "$arg" in
+            "&&"|"||"|"|"|"("|")"|";")
+                arg_formatted="$arg"
+                ;;
+            *)
+                printf -v arg_formatted '%q' "$arg"
+                ;;
+        esac
+
+        formatted+="$arg_formatted"
+    done
+
+    printf '%s\n' "$formatted"
+}
