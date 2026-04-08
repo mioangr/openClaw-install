@@ -2,28 +2,24 @@
 
 Instructions and scripts to install a **local AI and AI agent environment**.
 
-This repository provides a **reproducible, script-based (to the extent possible) setup** to deploy an isolated AI and AI agent inside a virtual machine, with controlled access to system resources and GitHub.
+This repository provides a **reproducible, script-based (to the extent possible) setup** to deploy an isolated AI and AI agent in a virtual machine, with controlled access to system resources and GitHub repositories.
+
+The end result is an AI and AI agent system that can collaborate with you on a public or private repository, to build software or complete other tasks.
 
 ---
-# 🎯 Purpose
-To have an AI and AI agent that can collaborate with me on a public or private repository.  
-It should be able to write software or complete other writing tasks (e.g. a book) according to the provided instructions.  
-It should have the capability to build a software from the specifications alone. Or write a book using the instructions on the content and the description of the audience.
-It should be able to accept instructions via email or a chat window.  
-
-**A secure, self-hosted AI collaborator** that works alongside you on code and writing projects.
-Send instructions via **email or chat**, and your AI agent will:
-- 💻 Build software from specifications alone and update the specifications to reflect the code updates
-- 📚 Write books based on content guidelines and audience description
-- 🔄 Collaborate on public and private repositories
-- 📝 Accept multi-channel instructions (email, REST API, web UI)
-- 🔐 Keep all work private and local (using DeepSeek)
-- ✅ Submit work as PRs for your review before merging
+# Features
+ 
+- It should be able to write software or complete other writing tasks (e.g. a book) according to the provided instructions.  
+- It should have the capability to build a software from the specifications alone. And also update the specifications and documentation to reflect the code updates.
+- It should be able to write a book using the instructions on the content and the description of the audience and thhe learning outcomes.
+- It should be able to accept instructions via different channels (REST API, email, chat web UI, etc).  
+- When the required action is to modify the files, it should submit work as GIT pull requests for a review by the user before merging.
+- It should allow the user to select which model to use when sending a request.
+- It should have a list of local (open) models to select for local installation during the setup.
+- It should also have a list of cloud models (together with the user's credentials or API tokens).
 
 
 # 🔐 Security Model
-
-This setup is designed with **practical isolation**:
 
 ### Isolation Layers
 
@@ -33,55 +29,23 @@ This setup is designed with **practical isolation**:
 
 ### Key Security Decisions
 
-* ❌ No direct access to host filesystem
-* ❌ No secrets stored in GitHub
-* ✅ Secrets stored locally in `.env`
-* ⚠️ Docker group = root-equivalent (acceptable in VM)
-
----
-
-### Key Design Points:
-- **Isolation**: VM → Docker → dedicated user (`aiuser`)
-- **Communication**: Only outbound to GitHub API (restricted, authenticated)
-- **Safety**: PR workflow ensures human review gate
-- **Extensibility**: Multi-channel input pattern supports future additions (email, webhooks)
-- **Auditability**: All actions logged for review and debugging
+* No direct access to host filesystem
+* No secrets stored in GitHub
+* Secrets stored locally in `.env`
+* Docker group = root-equivalent (acceptable in VM)
+* Communication: Only outbound to GitHub API (restricted, authenticated)
+* Pull Request workflow ensures human review gate
+* All actions logged for review and debugging
+* Fine-grained GitHub tokens or SSH deploy keys**: Least-privilege repository access
 
 ---
 
 # Selected components and reasoning for their choice.
 To achieve the stated goals, the following components are required:
 
-## Infrastructure & Orchestration
-- **Ubuntu VM**: Host isolation layer
-- **Dedicated Linux user (`aiuser`)**: Process-level execution isolation
-- **Docker & Docker Compose**: Containerization for reproducibility and isolation
-- **`.env` secrets management**: Secure credential storage without GitHub exposure
-
 ## AI & LLM Layer
 - **DeepSeek** (via Ollama in a separate container): Runs locally, can build software from specifications and generate written content
 - **LangGraph** (Python framework): Orchestrates interactions with GitHub, filesystem, and command execution. More flexible and easier to customise than black‑box agents.
-
-## Integration & Communication Layer
-- **GitHub API & Git**: For repository interaction, PR workflow, and code version control
-- **Email integration** (optional but planned): For multi-channel instruction input
-- **REST API** (FastAPI or similar): For webhook receivers and agent task triggering
-- **Web UI** (optional): User-friendly dashboard for instructions and monitoring
-
-## Security & Control Layer
-- **Fine-grained GitHub tokens or SSH deploy keys**: Least-privilege repository access
-- **PR workflow enforcement**: Human review gate before code merges
-- **Execution safeguards** (planned): Command approval and filesystem restrictions
-- **Audit logging**: Track agent actions for security review
-
-## Reasoning
-Each component directly supports one or more goals:
-- Local LLM → Privacy requirement
-- LangGraph → Full control over automation of software building and writing tasks
-- GitHub integration → Collaboration workflow
-- Docker + VM → Security model requirement
-- Multi-channel input → Flexibility of instruction delivery
-- PR workflow → Quality control and human oversight
 
 
 # 🧱 Architecture Overview
@@ -130,24 +94,11 @@ Each component directly supports one or more goals:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Overview of folders and scripts 
-
-```
-local-ai-agent/
-├── setup/setup.sh # install-from-web will call this
-├── setup/ai-agent/ # All installation scripts
-├── settings/repos/ # Repository configurations
-├── setup/docker/ # Docker and container files
-├── agent/ # AI agent code
-├── scripts/ # Utility scripts
-├── archives/ # Old scripts and files
-└── logs/ # Runtime logs
-```
 
 ## Folder structure and contents
 
 ```
-local-ai-agent/
+local-ai-agent/                        # Subfolder where everything is installed.
 ├── README.md                          # Main project documentation (updated)
 ├── install.conf                       # Shared install configuration
 ├── setup.sh                           # Umbrella setup script (run once)
@@ -167,14 +118,14 @@ local-ai-agent/
 │   ├── docker-compose.yml             # Main compose file
 │   ├── Dockerfile.agent               # Agent container build
 │   └── requirements.txt               # Python dependencies
-├── settings/repos/                      # Repository configurations
+├── settings/repos/                    # Repository configurations
 │   ├── README.md                      # Documentation for repo configs
 │   └── repos.json                     # List of managed repositories
 ├── agent/                             # Agent code
 │   ├── README.md                      # Agent documentation
 │   ├── langgraph_agent.py             # Main agent script
 │   └── repo_manager.py                # Repository management utilities
-├── scripts/                            # Helper scripts
+├── scripts/                           # Helper scripts
 │   ├── README.md                      # Scripts documentation
 │   └── send_task.py                   # Send task to agent
 └── logs/                              # Log files (created at runtime)
@@ -208,31 +159,78 @@ local-ai-agent/
 
 - Looks up repository URL from config
 - Clones the specific project
--  Makes changes
-- Creates PR
+- Makes changes
+- Responds with answer and possibly creates PR
 
 ## Deployment
 
+## 0. Prerequisites
+
+* Windows host
+* VMware Workstation or VMware Fusion
+* Ubuntu Server installed inside VM
+* Internet access inside VM
+* Linux security hardening and extra packages were installed with the script [linux-initial-config.sh](0-Prerequisites/linux-golden-image/linux-initial-config.sh)
+* A "Golden image" is created for this state of linux so it can be reused in the next steps (installation of Docker and AI components)
+
+
+## 1. Install
+> **Bootstrap** = Initial automated setup of a fresh system.
+
+**Single-command install via URL**
+```bash
+curl -s https://raw.githubusercontent.com/mioangr/local-ai-agent/main/setup/install-from-web.sh | bash
+```
+
+Run the deployment from your **main Linux user account**.  
+It will create a temporary subfolder (e.g., `temp-web-install`) in your home directory, clone the repository into it, and run the setup.sh script from there.   
+
+Most setup steps are safe to rerun, and the recovery scripts above can help if a previous install stopped halfway. The bootstrap performs:
+
+* system update
+* installs required packages
+* installs Docker (if not already installed)
+* creates `aiuser`
+* adds user to Docker group
+* creates working directory
+* prompts for secrets and stores them in `.env`
+* creates a starter `docker-compose.yml`
+
+After setup completes and the system is running normally, that temporary install folder is safe to delete.  
+
+## 3. After Setup
+
+Switch to the AI user:
+
+```bash
+su - aiuser
+```
+
+Test Docker:
+
+```bash
+docker run hello-world
+```
+
+Start environment:
+
+```bash
+cd /home/aiuser/local-ai-agent/docker
+docker compose up -d
+```
+
+
+**Other maintainance scripts**
+
 | Script | Purpose | Usage |
 |--------|---------|-------|
-| `install-from-web.sh` | Bootstrap a fresh VM installation from GitHub | `curl -s https://raw.githubusercontent.com/mioangr/local-ai-agent/main/setup/install-from-web.sh \| bash` |
-| `rm -rf temp-web-install` | remove temp folder |  |
+| `rm -rf temp-web-install` | remove temp installation folder |  |
 | repos.json | Edit the list of repos | `sudo nano /home/aiuser/local-ai-agent/settings/repos/repos.json`  |
 | `doctor.sh` | Inspect the installation and report what is missing or unhealthy | `cd /home/aiuser/local-ai-agent/scripts && ./doctor.sh` |
 | `reset-runtime.sh` | Stop containers and clear transient runtime state so you can retry the Docker/runtime steps | `cd /home/aiuser/local-ai-agent/scripts && ./reset-runtime.sh` |
 | `reset-install.sh` | Remove the installed project files, and optionally the dedicated user, before reinstalling | `cd /home/aiuser/local-ai-agent/scripts && ./reset-install.sh --remove-user` |
 | reset install  | from the web |  |
 
-
-Run the deployment from your **main Linux user account**. The setup scripts handle the process of automatically creating a specific, dedicated `aiuser` account that will be used by the AI components.
-
-
-
-**Single-command install via URL**
-```bash
-curl -s https://raw.githubusercontent.com/mioangr/local-ai-agent/main/setup/install-from-web.sh | bash
-```
-It will create a temporary subfolder (e.g., `temp-web-install`) in your home directory, clone the repository into it, and run the setup.sh script from there. After setup completes and the system is running normally, that temporary install folder is safe to delete.
 
 
 ## Component Placement & Responsibilities
@@ -264,80 +262,9 @@ It will create a temporary subfolder (e.g., `temp-web-install`) in your home dir
 2. **Chat** → Matrix/Telegram bot → HTTP POST to API Gateway.
 3. **REST** → Direct `curl` or webhook → API Gateway.
 
-The gateway writes a task to Redis queue; the agent polls or listens, executes, and pushes results back (e.g., PR link, written chapters).
-
-## Missing Pieces (to be added in future)
-
-- Command approval layer (human-in-the-loop for dangerous commands)
-- Resource limits (CPU/RAM for agent & LLM containers)
-- Automatic cleanup of workspace after PR merge
-  
----
-
-# ⚙️ Setup Instructions
-
-## 1. Prerequisites
-
-* Windows host
-* VMware Workstation or VMware Fusion
-* Ubuntu Server installed inside VM
-* Internet access inside VM
-* Linux security hardening and extra packages were installed with the script [linux-initial-config.sh](0-Prerequisites/linux-golden-image/linux-initial-config.sh)
-* A "Golden image" is created for this state of linux so it can be reused in the next steps (installation of Docker and AI components)
-
----
+The gateway writes a task to Redis queue; the agent polls or listens, executes, and pushes results back (e.g., textual answer, PR link, written chapters).
 
 
-
-## 2. Run Setup Script
-
-Make sure to run this step from your **main Linux user account** (the script will automatically create the dedicated `aiuser` account for the AI running context).
-
-**Automated URL Installation**
-```bash
-curl -s https://raw.githubusercontent.com/mioangr/local-ai-agent/main/setup/install-from-web.sh | bash
-```
-Will download the source files into a new temporary `temp-web-install/` subfolder and run them from there.
-
-
-
-## 3. What the Script Does (Bootstrap)
-
-> **Bootstrap** = Initial automated setup of a fresh system.
-
-Most setup steps are safe to rerun, and the recovery scripts above can help if a previous install stopped halfway. The bootstrap performs:
-
-* system update
-* installs required packages
-* installs Docker (if not already installed)
-* creates `aiuser`
-* adds user to Docker group
-* creates working directory
-* prompts for secrets and stores them in `.env`
-* creates a starter `docker-compose.yml`
-
----
-
-## 4. After Setup
-
-Switch to the AI user:
-
-```bash
-su - aiuser
-```
-
-Test Docker:
-
-```bash
-docker run hello-world
-```
-
-Start environment:
-
-```bash
-cd /home/aiuser/local-ai-agent/docker
-docker compose up -d
-```
 
 ---
 
@@ -380,23 +307,6 @@ Planned approach:
 * agent creates branch
 * agent submits PR
 * human reviews before merge
-
----
-
-
-# 🚧 Current Status
-
-This project is **in active development**.
-
-## What is already implemented
-
-* VM-based architecture
-* Docker installation automation
-* AI user creation
-* environment setup script (idempotent)
-* reset script
-* `.env` secrets handling
-
 
 ---
 
