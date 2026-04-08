@@ -122,7 +122,7 @@ local-ai-agent/                        # Subfolder where everything is installed
 │       ├── docker-compose.yml         # Main compose file
 │       ├── Dockerfile.agent           # Agent container build
 │       └── requirements.txt           # Python dependencies
-├── rum/                               # Daily runtime scripts
+├── run/                               # Daily runtime scripts
 │   ├── README.md                      # Runtime script documentation
 │   └── send_task.py                   # Send task to agent
 ├── settings/repos/                    # Repository configurations
@@ -157,7 +157,7 @@ local-ai-agent/                        # Subfolder where everything is installed
 2. Send commands with project name:
 
    ```bash
-   ./rum/send_task.py --project my-web-app --instruction "Add error handling to login function"
+   ./run/send_task.py --project my-web-app --instruction "Add error handling to login function"
 
 3. Agent automatically:
 

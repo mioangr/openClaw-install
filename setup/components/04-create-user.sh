@@ -66,7 +66,7 @@ export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 # Path for local runtime scripts
 export AI_INSTALL_ROOT="\$HOME/$INSTALL_DEST_DIR"
 export CONFIG_REPO_PATH="\$AI_INSTALL_ROOT/settings/repos"
-export PATH="\$AI_INSTALL_ROOT/rum:\$PATH"
+export PATH="\$AI_INSTALL_ROOT/run:\$PATH"
 EOF
 
 sudo chown $AI_USER:$AI_USER "$AI_HOME/.bashrc"
