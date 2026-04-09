@@ -11,12 +11,20 @@ source "$(dirname "$0")/../common.sh"
 
 print_header "Installing Docker"
 
+ensure_docker_service_enabled() {
+    print_step "Ensuring Docker service is enabled for automatic start on boot..."
+    sudo systemctl start docker
+    sudo systemctl enable docker
+    check_error "Failed to enable Docker service"
+}
+
 # Check if Docker is already installed
 if check_command docker; then
     print_warning "Docker is already installed"
     docker --version
     prompt_yes_no "Reinstall? (y/n) " REPLY
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        ensure_docker_service_enabled
         echo "Skipping Docker installation"
         exit 0
     fi
@@ -46,9 +54,7 @@ check_error "Failed to install Docker"
 
 # Start Docker service
 print_step "Starting Docker service..."
-sudo systemctl start docker
-sudo systemctl enable docker
-check_error "Failed to start Docker service"
+ensure_docker_service_enabled
 
 # Verify installation
 print_step "Verifying Docker installation..."

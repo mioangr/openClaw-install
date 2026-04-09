@@ -202,6 +202,13 @@ Most setup steps are safe to rerun, and the recovery scripts above can help if a
 
 After setup completes and the system is running normally, that temporary install folder is safe to delete.  
 
+If you run the web bootstrap again later and a previous installation is detected, the bootstrap will:
+
+- automatically remove any stale `temp-web-install` folder
+- ask for confirmation before resetting the existing installation
+- run the install cleanup in a conservative mode that keeps Docker volumes such as downloaded Ollama models
+- continue with a fresh installation after cleanup
+
 ## 3. After Setup
 
 Switch to the AI user:
@@ -216,12 +223,36 @@ Test Docker:
 docker run hello-world
 ```
 
-Start environment:
+The setup process already starts the services for you, so no reboot is required before first use. If setup completed successfully, the system is ready to use immediately.
+
+If you ever need to start the environment manually again:
 
 ```bash
 cd /home/aiuser/local-ai-agent/docker
 docker compose up -d
 ```
+
+### Automatic Startup After Reboot
+
+The services are configured to start automatically after a reboot.
+
+- The Docker system service is enabled during installation with `systemctl enable docker`
+- The containers use Docker Compose `restart: unless-stopped`
+- Because the containers are created during setup, they are brought back automatically by the Docker daemon on boot
+
+This automatic startup is not tied to an interactive login by `aiuser`.
+
+- `aiuser` is used during installation and for day-to-day administration
+- After reboot, the Docker daemon starts as a system service under `root`
+- The containers are then restarted by Docker, not by an `aiuser` shell session
+
+So once the installation has completed successfully, you should not need to log in as `aiuser` just to bring the services back after a normal reboot.
+
+In short:
+
+- After setup completes successfully, the services have already been started
+- A restart is not required before you begin using the system
+- After future reboots, Docker brings the services back automatically
 
 
 **Other maintainance scripts**
