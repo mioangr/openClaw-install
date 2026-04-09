@@ -24,4 +24,3 @@ def load_install_config() -> Dict[str, str]:
         values[key.strip()] = value.strip().strip("'\"")
 
     return values
-
