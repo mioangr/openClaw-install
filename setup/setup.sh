@@ -18,6 +18,10 @@ SETUP_DIR="$SCRIPT_DIR/components"
 # Source common functions
 source "$SCRIPT_DIR/common.sh"
 
+sudo mkdir -p "$LOGS_DIR"
+sudo touch "$LOGS_DIR/activity.log"
+exec > >(tee -a "$LOGS_DIR/activity.log") 2>&1
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'

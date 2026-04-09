@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>System Status</title>
+  <style>
+    :root {
+      --bg: #edf3f1;
+      --panel: #fffefb;
+      --ink: #18312f;
+      --muted: #56706b;
+      --accent: #8b3a1f;
+      --accent-2: #14532d;
+      --border: #ced8d4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(20, 83, 45, 0.10), transparent 30%),
+        linear-gradient(180deg, #faf7f0 0%, var(--bg) 100%);
+    }
+    main {
+      width: min(1100px, calc(100% - 32px));
+      margin: 32px auto 48px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(24, 49, 47, 0.08);
+    }
+    .topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    h1 { margin: 0; }
+    p { color: var(--muted); line-height: 1.5; }
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .button, button {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 16px;
+      font: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .button {
+      background: var(--accent-2);
+      color: #fff;
+    }
+    button {
+      background: var(--accent);
+      color: #fff;
+    }
+    .logpanel {
+      margin-top: 20px;
+      background: #101918;
+      color: #d7efe2;
+      border-radius: 16px;
+      border: 1px solid #203533;
+      padding: 16px;
+      height: 60vh;
+      overflow: auto;
+      white-space: pre-wrap;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+    .meta {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel">
+      <div class="topline">
+        <div>
+          <h1>System Status</h1>
+          <p>Current shared activity log. This page is intended to show setup and runtime messages in one place.</p>
+        </div>
+        <div class="actions">
+          <a class="button" href="/">Back to dashboard</a>
+          <form action="/status/clear" method="post">
+            <button type="submit">Clear Logs</button>
+          </form>
+        </div>
+      </div>
+      <div class="meta">
+        <span>Log file: {{ log_file }}</span>
+        <span>Lines shown: {{ line_count }}</span>
+      </div>
+      <div class="logpanel" id="logpanel">{{ log_text }}</div>
+    </section>
+  </main>
+  <script>
+    const panel = document.getElementById("logpanel");
+    panel.scrollTop = panel.scrollHeight;
+  </script>
+</body>
+</html>

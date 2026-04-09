@@ -77,6 +77,12 @@
       font-size: 0.82rem;
       font-weight: 700;
     }
+    .nav {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
     a { color: var(--accent); text-decoration: none; }
     @media (max-width: 860px) {
       main { grid-template-columns: 1fr; }
@@ -86,7 +92,10 @@
 <body>
   <main>
     <section class="hero">
-      <div class="badge">Auth mode: {{ auth_mode }}</div>
+      <div class="nav">
+        <span class="badge">Auth mode: {{ auth_mode }}</span>
+        <a href="/status">System Status</a>
+      </div>
       <h1>Local AI Agent Gateway</h1>
       <p>Submit a task to the agent from the LAN. This first version runs anonymously, but the API boundary is ready for authentication later.</p>
       <form action="/submit" method="post">

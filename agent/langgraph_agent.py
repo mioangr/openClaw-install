@@ -36,6 +36,7 @@ from langgraph.graph import StateGraph, END
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from shared.repos import get_repository_map
+from shared.logging_utils import APP_LOG_FILE, ensure_log_dir
 from shared.tasks import ERROR_CHANNEL, QUEUE_NAME, RESULT_CHANNEL, update_task
 
 # =============================================================================
@@ -51,11 +52,12 @@ CONFIG_REPO_PATH = os.getenv("CONFIG_REPO_PATH", "/settings/repos")
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 # Setup logging
+ensure_log_dir()
 logging.basicConfig(
     level=getattr(logging, LOG_LEVEL),
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("/app/logs/agent.log"),
+        logging.FileHandler(APP_LOG_FILE),
         logging.StreamHandler(sys.stdout)
     ]
 )

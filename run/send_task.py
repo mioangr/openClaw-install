@@ -18,6 +18,7 @@ import redis
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from shared.config import load_install_config
+from shared.logging_utils import configure_file_logger
 from shared.repos import get_repository_map
 from shared.tasks import create_task_payload, get_task, submit_task
 
@@ -29,6 +30,7 @@ INSTALL_ROOT = f"/home/{AI_USER}/{INSTALL_DEST_DIR}"
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
 CONFIG_PATH = os.getenv("CONFIG_REPO_PATH", f"{INSTALL_ROOT}/settings/repos")
 DOCKER_DIR = f"{INSTALL_ROOT}/docker"
+logger = configure_file_logger("run.send_task")
 
 
 def main():
@@ -61,6 +63,7 @@ def main():
         submitted_by="cli",
     )
     submit_task(r, task)
+    logger.info("Queued task %s for project %s via CLI", task["task_id"], args.project)
 
     print("Task sent to agent")
     print(f"  Task ID: {task['task_id']}")

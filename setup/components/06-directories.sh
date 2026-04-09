@@ -27,7 +27,7 @@ DIRECTORIES=(
 for dir in "${DIRECTORIES[@]}"; do
     print_step "Creating $dir"
     sudo mkdir -p "$dir"
-    sudo chown $AI_USER:$AI_USER "$dir"
+    sudo chown -R $AI_USER:$AI_USER "$dir"
     sudo chmod 755 "$dir"
 done
 
