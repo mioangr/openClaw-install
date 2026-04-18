@@ -16,6 +16,9 @@ echo "--- Starting System Optimization ---"
 echo "--- Updating Packages ---"
 sudo apt update && sudo apt upgrade -y
 
+# 1b. Change timezone:
+sudo timedatectl set-timezone Europe/Athens
+   
 # 2. Install Essential Utilities & VMware Integration
 echo "--- Installing Essential Tools & Open-VM-Tools ---"
 sudo apt install -y open-vm-tools open-vm-tools-desktop curl wget git build-essential vim htop net-tools btop
