@@ -36,6 +36,11 @@
       gap: 12px;
       flex-wrap: wrap;
     }
+    .status-layout {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: 1.15fr 0.85fr;
+    }
     .button {
       background: var(--accent-2);
       color: #fff;
@@ -65,6 +70,29 @@
       font-size: 0.95rem;
       margin-top: 8px;
     }
+    .models-panel {
+      align-self: start;
+    }
+    .models-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .model-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.65);
+    }
+    .model-name {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .models-error {
+      margin-top: 14px;
+      color: var(--muted);
+    }
     .topline {
       gap: 16px;
       flex-wrap: wrap;
@@ -73,10 +101,15 @@
     h1 {
       margin: 0;
     }
+    @media (max-width: 920px) {
+      .status-layout {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-  <main>
+  <main class="status-layout">
     <section class="panel">
       <div class="topline">
         <div>
@@ -95,6 +128,32 @@
         <span>Lines shown: {{ line_count }}</span>
       </div>
       <div class="logpanel" id="logpanel">{{ log_text }}</div>
+    </section>
+    <section class="panel models-panel">
+      <h2>Installed AI Models</h2>
+      <p>The API gateway reads this list from Ollama so the task form and chat form can offer the installed models directly.</p>
+      {% if models %}
+      <div class="models-list">
+        {% for model in models %}
+        <div class="model-card">
+          <span class="model-name">{{ model.name }}</span>
+          {% if model.details and model.details.parameter_size %}
+          <div>Parameters: {{ model.details.parameter_size }}</div>
+          {% endif %}
+          {% if model.details and model.details.family %}
+          <div>Family: {{ model.details.family }}</div>
+          {% endif %}
+          {% if model.modified_at %}
+          <div>Updated: {{ model.modified_at }}</div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% elif models_error %}
+      <div class="models-error">{{ models_error }}</div>
+      {% else %}
+      <div class="models-error">No installed models were found.</div>
+      {% endif %}
     </section>
   </main>
   <script>

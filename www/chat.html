@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Chat</title>
+  <link rel="stylesheet" href="/www/common.css">
+  <style>
+    :root {
+      --bg: #efe9de;
+      --panel-bg: #fffefb;
+      --ink: #1c272f;
+      --muted: #5f6f78;
+      --accent: #165d53;
+      --accent-soft: #dfece7;
+      --border: #d5cec0;
+      --assistant-bg: #f5eee2;
+      --user-bg: #e5f2ed;
+    }
+    body {
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(22, 93, 83, 0.12), transparent 25%),
+        linear-gradient(180deg, #f8f4ed 0%, var(--bg) 100%);
+    }
+    .chat-layout {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: 0.85fr 1.15fr;
+    }
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      box-shadow: 0 18px 50px rgba(28, 39, 47, 0.08);
+    }
+    p,
+    .models-error {
+      color: var(--muted);
+    }
+    .chat-sidebar {
+      align-self: start;
+    }
+    .chat-controls {
+      margin-top: 18px;
+    }
+    input,
+    select,
+    textarea,
+    button {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--ink);
+    }
+    textarea {
+      min-height: 130px;
+    }
+    button {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+    }
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      min-height: 72vh;
+    }
+    .chat-messages {
+      background: linear-gradient(180deg, #fbf8f2 0%, #f4eee3 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 48vh;
+      max-height: 60vh;
+      overflow: auto;
+      display: grid;
+      gap: 14px;
+    }
+    .message {
+      border-radius: 16px;
+      padding: 14px 16px;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+    .message-role {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .message-user {
+      background: var(--user-bg);
+      justify-self: end;
+      max-width: 88%;
+    }
+    .message-assistant {
+      background: var(--assistant-bg);
+      justify-self: start;
+      max-width: 92%;
+    }
+    .statusline {
+      min-height: 24px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .nav {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .pill {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+    a {
+      color: var(--accent);
+    }
+    .models-error {
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+    @media (max-width: 920px) {
+      .chat-layout {
+        grid-template-columns: 1fr;
+      }
+      .chat-panel {
+        min-height: auto;
+      }
+      .chat-messages {
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="chat-layout">
+    <section class="panel chat-sidebar">
+      <div class="nav">
+        <span class="pill">Auth mode: {{ auth_mode }}</span>
+        <a href="/">Task dashboard</a>
+        <a href="/status">System Status</a>
+      </div>
+      <h1>AI Chat</h1>
+      <p>Talk directly to the local model through the API gateway. This is a synchronous chat path, separate from the queued repository-task workflow.</p>
+      <form id="chat-form" class="chat-controls">
+        <div>
+          <label for="model">Installed model</label>
+          <select id="model" name="model" {% if not model_names %}disabled{% endif %}>
+            {% for model_name in model_names %}
+            <option value="{{ model_name }}">{{ model_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Ask the AI something..." {% if not model_names %}disabled{% endif %}></textarea>
+        </div>
+        <button id="send-button" type="submit" {% if not model_names %}disabled{% endif %}>Send</button>
+      </form>
+      {% if models_error %}
+      <div class="models-error">{{ models_error }}</div>
+      {% endif %}
+      {% if not model_names and not models_error %}
+      <div class="models-error">No installed Ollama models were detected yet.</div>
+      {% endif %}
+    </section>
+    <section class="panel chat-panel">
+      <div>
+        <h2>Conversation</h2>
+        <p>Your message history stays in the browser for this page session.</p>
+      </div>
+      <div id="chat-messages" class="chat-messages">
+        <div class="message message-assistant">
+          <span class="message-role">Assistant</span>
+          Chat is ready. Pick a model and send a message.
+        </div>
+      </div>
+      <div id="statusline" class="statusline"></div>
+    </section>
+  </main>
+  <script>
+    const form = document.getElementById("chat-form");
+    const messageInput = document.getElementById("message");
+    const modelSelect = document.getElementById("model");
+    const chatMessages = document.getElementById("chat-messages");
+    const statusline = document.getElementById("statusline");
+    const sendButton = document.getElementById("send-button");
+    const history = [];
+
+    function appendMessage(role, content) {
+      const wrapper = document.createElement("div");
+      wrapper.className = `message message-${role}`;
+
+      const roleEl = document.createElement("span");
+      roleEl.className = "message-role";
+      roleEl.textContent = role === "user" ? "You" : "Assistant";
+
+      wrapper.appendChild(roleEl);
+      wrapper.append(document.createTextNode(content));
+      chatMessages.appendChild(wrapper);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    form?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const message = messageInput.value.trim();
+      const model = modelSelect.value;
+      if (!message || !model) {
+        return;
+      }
+
+      const requestHistory = history.slice();
+      appendMessage("user", message);
+      history.push({ role: "user", content: message });
+      messageInput.value = "";
+      messageInput.focus();
+
+      statusline.textContent = `Waiting for ${model}...`;
+      sendButton.disabled = true;
+
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model,
+            message,
+            history: requestHistory,
+          }),
+        });
+
+        const payload = await response.json();
+        if (!response.ok) {
+          throw new Error(payload.detail || "Chat request failed.");
+        }
+
+        appendMessage("assistant", payload.reply);
+        history.push({ role: "assistant", content: payload.reply });
+        statusline.textContent = `Response received from ${payload.model}.`;
+      } catch (error) {
+        const text = error instanceof Error ? error.message : "Unknown error";
+        appendMessage("assistant", `Error: ${text}`);
+        history.push({ role: "assistant", content: `Error: ${text}` });
+        statusline.textContent = "The chat request failed.";
+      } finally {
+        sendButton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -4,17 +4,19 @@
 import os
 import sys
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
+import requests
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from api.services.redis_client import get_redis_client
+from api.services.ollama import chat_with_model, list_installed_models
 from api.services.repositories import get_all_projects, get_project_map
 from api.services.tasks import create_and_submit_task, get_recent_tasks, get_task_by_id
 from shared.logging_utils import APP_LOG_FILE, configure_file_logger, ensure_log_dir
@@ -27,10 +29,12 @@ AUTH_MODE = os.getenv("AUTH_MODE", "anonymous")
 app = FastAPI(title=APP_TITLE, version=APP_VERSION)
 templates = Jinja2Templates(directory=str(Path(__file__).resolve().parent.parent / "www"))
 static_dir = Path(__file__).resolve().parent / "static"
+www_dir = Path(__file__).resolve().parent.parent / "www"
 app_logger = configure_file_logger("api-gateway")
 
 if static_dir.exists():
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+app.mount("/www", StaticFiles(directory=str(www_dir)), name="www")
 
 
 class TaskCreateRequest(BaseModel):
@@ -58,6 +62,23 @@ class HealthResponse(BaseModel):
     auth_mode: str
 
 
+class ChatMessage(BaseModel):
+    role: str = Field(..., min_length=1)
+    content: str = Field(..., min_length=1)
+
+
+class ChatRequest(BaseModel):
+    model: str = Field(..., min_length=1)
+    message: str = Field(..., min_length=1)
+    history: List[ChatMessage] = Field(default_factory=list)
+
+
+class ChatResponse(BaseModel):
+    model: str
+    reply: str
+    history: List[ChatMessage]
+
+
 def read_log_text(max_lines: int = 1000) -> tuple[str, int]:
     ensure_log_dir()
     if not APP_LOG_FILE.exists():
@@ -68,6 +89,24 @@ def read_log_text(max_lines: int = 1000) -> tuple[str, int]:
     if len(lines) > max_lines:
         lines = lines[-max_lines:]
     return "\n".join(lines) if lines else "No log entries yet.", len(lines)
+
+
+def get_models_context() -> Dict[str, Any]:
+    try:
+        models = list_installed_models()
+        model_names = [model.get("name", "") for model in models if model.get("name")]
+        return {
+            "models": models,
+            "model_names": model_names,
+            "models_error": "",
+        }
+    except requests.RequestException as exc:
+        app_logger.warning("Could not load installed models from Ollama: %s", exc)
+        return {
+            "models": [],
+            "model_names": [],
+            "models_error": f"Could not load installed models: {exc}",
+        }
 
 
 @app.get("/health", response_model=HealthResponse)
@@ -83,6 +122,15 @@ def health() -> HealthResponse:
 @app.get("/api/projects")
 def list_projects():
     return {"projects": get_all_projects(), "auth_mode": AUTH_MODE}
+
+
+@app.get("/api/models")
+def list_models():
+    context = get_models_context()
+    return {
+        "models": context["models"],
+        "error": context["models_error"],
+    }
 
 
 @app.get("/api/tasks", response_model=List[TaskResponse])
@@ -114,8 +162,30 @@ def create_task(request: TaskCreateRequest):
     return TaskResponse(**task)
 
 
+@app.post("/api/chat", response_model=ChatResponse)
+def api_chat(request: ChatRequest):
+    messages = [message.model_dump() for message in request.history]
+    messages.append({"role": "user", "content": request.message})
+
+    try:
+        result = chat_with_model(request.model, messages)
+    except requests.RequestException as exc:
+        raise HTTPException(status_code=502, detail=f"Ollama request failed: {exc}") from exc
+
+    reply = result.get("message", {}).get("content", "").strip()
+    history = [ChatMessage(**message) for message in messages]
+    history.append(ChatMessage(role="assistant", content=reply or "No response was returned."))
+    app_logger.info("Completed chat request against model %s", request.model)
+    return ChatResponse(
+        model=request.model,
+        reply=reply or "No response was returned.",
+        history=history,
+    )
+
+
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
+    models_context = get_models_context()
     return templates.TemplateResponse(
         request=request,
         name="index.html",
@@ -123,6 +193,8 @@ def index(request: Request):
             "projects": get_all_projects(),
             "tasks": get_recent_tasks(15),
             "auth_mode": AUTH_MODE,
+            "model_names": models_context["model_names"],
+            "models_error": models_context["models_error"],
         },
     )
 
@@ -160,8 +232,23 @@ def task_detail(request: Request, task_id: str):
     )
 
 
+@app.get("/chat", response_class=HTMLResponse)
+def chat_page(request: Request):
+    models_context = get_models_context()
+    return templates.TemplateResponse(
+        request=request,
+        name="chat.html",
+        context={
+            "auth_mode": AUTH_MODE,
+            "model_names": models_context["model_names"],
+            "models_error": models_context["models_error"],
+        },
+    )
+
+
 @app.get("/status", response_class=HTMLResponse)
 def status_page(request: Request):
+    models_context = get_models_context()
     log_text, line_count = read_log_text()
     return templates.TemplateResponse(
         request=request,
@@ -171,6 +258,8 @@ def status_page(request: Request):
             "log_text": log_text,
             "line_count": line_count,
             "log_file": str(APP_LOG_FILE),
+            "models": models_context["models"],
+            "models_error": models_context["models_error"],
         },
     )
 
