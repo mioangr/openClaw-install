@@ -236,6 +236,13 @@ docker run hello-world
 
 The setup process already starts the services for you, so no reboot is required before first use. If setup completed successfully, the system is ready to use immediately.
 
+Web pages after setup:
+
+- Main task dashboard: `http://[vm-IP]:8000/`
+- Browser chat with the local model: `http://[vm-IP]:8000/chat`
+- System status page: `http://[vm-IP]:8000/status`
+- Task detail page: `http://[vm-IP]:8000/tasks/<task_id>`
+
 If you ever need to start the environment manually again:
 
 ```bash
