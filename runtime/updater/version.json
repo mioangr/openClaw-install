@@ -1,6 +1,6 @@
 {
   "product": "local-ai-agent",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "setup_version": "0.3.0",
   "updater_version": "1.0.0",
   "requires_full_setup": false,
@@ -38,10 +38,10 @@
     "runtime/www/task_detail.html",
     "runtime/www/status.html",
     "runtime/www/updates.html",
+    "runtime/www/repos.html",
     "runtime/updater/updater.sh",
     "runtime/updater/version.json",
-    "setup/docker/docker-compose.yml",
-    "runtime/api/main.py"
+    "setup/docker/docker-compose.yml"
   ],
   "release_notes": "Fixed Internal Server Error when adding/editing repositories (incorrect response_class in POST /repos handler)."
 }
