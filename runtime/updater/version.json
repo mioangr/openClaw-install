@@ -3,7 +3,7 @@
   "version": "0.3.1",
   "setup_version": "0.3.0",
   "updater_version": "1.0.0",
-  "requires_full_setup": true,
+  "requires_full_setup": false,
   "minimum_setup_version": "0.3.0",
   "live_update_files": [
     "runtime/__init__.py",
