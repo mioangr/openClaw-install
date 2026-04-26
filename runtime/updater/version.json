@@ -1,6 +1,6 @@
 {
   "product": "local-ai-agent",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "setup_version": "0.3.0",
   "updater_version": "1.0.0",
   "requires_full_setup": true,
@@ -39,7 +39,8 @@
     "runtime/www/status.html",
     "runtime/www/updates.html",
     "runtime/updater/updater.sh",
-    "runtime/updater/version.json"
+    "runtime/updater/version.json",
+    "setup/docker/docker-compose.yml"
   ],
-  "release_notes": "Runtime code and web assets now live under runtime/. This release changes the installed layout and requires a fresh setup before later live updates can resume."
+  "release_notes": "Fixed docker-compose.yml to allow repository configuration to be writable (changed :ro to :rw for settings/repos volume mount)."
 }
