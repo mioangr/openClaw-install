@@ -1,6 +1,7 @@
-{
+{ 
+  "_comment": "when changes are made to the runtime, update the version number and add a brief description of the changes in the release_notes field. This will help users understand what has changed when they receive an update notification.",
   "product": "local-ai-agent",
-  "version": "0.3.4",
+  "version": "0.3.5", 
   "setup_version": "0.3.0",
   "updater_version": "1.0.0",
   "requires_full_setup": false,
