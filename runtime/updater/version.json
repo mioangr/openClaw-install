@@ -1,6 +1,6 @@
 {
   "product": "local-ai-agent",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "setup_version": "0.3.0",
   "updater_version": "1.0.0",
   "requires_full_setup": false,
