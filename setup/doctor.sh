@@ -103,10 +103,12 @@ if sudo_available_noninteractive; then
     done
 
     if sudo docker ps --format '{{.Names}}' | grep -qx "ollama"; then
-        if sudo docker exec ollama ollama list | grep -q "$MODEL_NAME"; then
-            ok "Model $MODEL_NAME is available in Ollama"
+        model_list=$(sudo docker exec ollama ollama list 2>/dev/null || true)
+        model_count=$(printf "%s\n" "$model_list" | tail -n +2 | sed '/^[[:space:]]*$/d' | wc -l | tr -d ' ')
+        if [ "$model_count" -gt 0 ]; then
+            ok "Ollama has $model_count installed model(s)"
         else
-            warn "Model $MODEL_NAME is not present in Ollama yet"
+            ok "No Ollama models installed yet; install one from /add-remove-components"
         fi
     else
         warn "Skipped model check because the ollama container is not running"

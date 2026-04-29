@@ -16,7 +16,6 @@ Shared installer helpers live in `setup/common.sh`.
 | `05-secrets.sh` | Prompts for and stores GitHub token | After user creation |
 | `06-directories.sh` | Creates project folder structure | After secrets |
 | `07-docker-compose.sh` | Builds and starts Docker containers | After directories |
-| `08-pull-model.sh` | Downloads the configured Ollama model via Ollama | Last step |
 | `README.md` | Describes the role of this folder and the expected behavior of each setup component | Reference |
 
 ## Error Handling
@@ -36,4 +35,4 @@ Most scripts are idempotent (safe to rerun). If you need to restart from a speci
 ## Manual Intervention
 Some steps may require manual input:
 - 05-secrets.sh will prompt for your GitHub token
-- 08-pull-model.sh shows download progress
+- AI models are installed after setup from the web UI at `/add-remove-components`

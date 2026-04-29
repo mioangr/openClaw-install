@@ -15,7 +15,7 @@ The end result is an AI and AI agent system that can collaborate with you on a p
 - It should be able to accept instructions via different channels (REST API, email, chat web UI, etc).  
 - When the required action is to modify the files, it should submit work as GIT pull requests for a review by the user before merging.
 - It should allow the user to select which model to use when sending a request.
-- It should have a list of local (open) models to select for local installation during the setup.
+- It should have a list of local open models that can be installed or removed from the web UI after setup.
 - It should also have a list of cloud models (together with the user's credentials or API tokens).
 
 
@@ -117,8 +117,7 @@ local-ai-agent/                        # Subfolder where everything is installed
 │   │   ├── 04-create-user.sh          # Create aiuser
 │   │   ├── 05-secrets.sh              # Configure secrets
 │   │   ├── 06-directories.sh          # Create directory structure
-│   │   ├── 07-docker-compose.sh       # Setup Docker Compose
-│   │   └── 08-pull-model.sh           # Pull configured Ollama model
+│   │   └── 07-docker-compose.sh       # Setup Docker Compose
 │   └── docker/                        # Docker-related setup files. Read more in folder setup/docker
 │       ├── README.md                  # Docker setup documentation
 │       ├── docker-compose.yml         # Main compose file
